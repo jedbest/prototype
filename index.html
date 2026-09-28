@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRONCITY GYM - Nsukka</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><div class="logo">IRONCITY</div><div id="openStatus" class="open-badge">● CHECKING...</div></header>
+
+<div id="home" class="page active">
+  <div class="hero">
+    <p class="small-neon">NSUKKA'S HARDEST GYM</p><h1>BUILD YOUR <span>STRENGTH</span></h1>
+    <div class="card time-card"><div class="time-row"><div>🌅 Morning<br><b>7AM - 11AM</b></div><div>🌇 Evening<br><b>3PM - 8PM</b></div></div><div class="time-note">Monday - Saturday • Closed Sunday & 11AM-3PM</div></div>
+    <div class="hero-img"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600"></div>
+    <p class="muted">No fake weights. Real coaches. Behind Ogige Main Market.</p>
+    <button class="btn" onclick="showPage('register')">JOIN NOW →</button>
+  </div>
+</div>
+
+<div id="plans" class="page">
+  <h2>CHOOSE YOUR <span class="neon">PLAN</span></h2><p class="muted-sm">Open 7-11AM & 3-8PM daily</p>
+  <div class="card plan-card" onclick="selectPlan(this,'Daily Without Coaching')"><h3>Daily • Without Coaching</h3><div class="price">₦1,500 / day</div></div>
+  <div class="card plan-card" onclick="selectPlan(this,'Daily With Coaching')"><span class="badge">BEGINNER FRIENDLY</span><h3>Daily • With Coaching</h3><div class="price">₦2,500 / day</div></div>
+  <div class="card plan-card" onclick="selectPlan(this,'Monthly Without Coaching')"><h3>Monthly • Without Coaching</h3><div class="price">₦12,000 / month</div></div>
+  <div class="card plan-card selected" onclick="selectPlan(this,'Monthly With Coaching')"><span class="badge">MOST POPULAR</span><h3>Monthly • With Coaching</h3><div class="price">₦20,000 / month</div></div>
+  <button class="btn" onclick="showPage('register')">REGISTER WITH THIS PLAN</button>
+</div>
+
+<div id="register" class="page">
+  <h2 class="neon">GYM REGISTRATION</h2>
+  <div class="card time-card small"><b>⏰ Open: 7-11AM & 3-8PM Daily</b></div>
+  <form id="gymForm" onsubmit="return validateForm(event)">
+    <label>FULL NAME *</label><input type="text" id="fullName" placeholder="Alex Morgan" required>
+    <label>PHONE (WhatsApp) *</label><input type="tel" id="phone" placeholder="081..." required>
+    <label>PREFERRED SESSION *</label>
+    <select id="session" required><option value="">When will you train?</option><option>Morning 7AM-11AM</option><option>Evening 3PM-8PM</option><option>Both Sessions</option></select>
+    <label>PLAN *</label>
+    <select id="planSelect" required><option value="">Select plan</option><option value="Daily Without Coaching">Daily Without Coaching - ₦1,500</option><option value="Daily With Coaching">Daily With Coaching - ₦2,500</option><option value="Monthly Without Coaching">Monthly Without Coaching - ₦12,000</option><option value="Monthly With Coaching">Monthly With Coaching - ₦20,000</option></select>
+    <label>GOAL *</label><textarea id="goal" placeholder="Build strength..." required></textarea>
+
+    <label>PAYMENT METHOD *</label>
+    <div class="pay-options">
+      <label class="pay-card active" id="cardGym"><input type="radio" name="pay" value="gym" checked onchange="togglePay()"><span>🏦</span><b>Pay at Gym</b><small>Cash at reception</small></label>
+      <label class="pay-card" id="cardNow"><input type="radio" name="pay" value="now" onchange="togglePay()"><span>💳</span><b>Pay Immediately</b><small>Transfer & upload receipt</small></label>
+    </div>
+
+    <div id="payNowBox" style="display:none" class="card pay-box">
+      <b style="color:#a6ff00">Bank Details for Transfer</b><br>
+      Bank: OPAY<br>Account: 1234567890<br>Name: IRONCITY GYM<br>Amount: <span id="showAmount">Select plan first</span><br><br>
+      <label>UPLOAD RECEIPT *</label>
+      <div class="upload-area" onclick="document.getElementById('receipt').click()">
+        <input type="file" id="receipt" accept="image/*,.pdf" hidden onchange="filePicked(this)">
+        <div id="uploadLabel">📤 UPLOAD RECEIPT<br><small>JPG, PNG, PDF • Max 5MB</small></div>
+      </div>
+      <div id="fileName" style="color:#a6ff00;font-size:12px;margin-top:6px"></div>
+    </div>
+
+    <p id="errorMsg" style="display:none;color:#ff4d4d;font-size:13px">⚠️ Fill all fields oo</p>
+    <button type="submit" class="btn">SUBMIT REGISTRATION</button>
+    <p class="tiny">All fields must be filled to register</p>
+  </form>
+</div>
+
+<div id="about" class="page">
+  <h2 class="neon">ABOUT US</h2>
+  <div class="card time-card"><h3>🕒 OPENING HOURS</h3><div class="time-row" style="margin-top:10px"><div><small>Morning</small><br><b>7AM - 11AM</b></div><div><small>Evening</small><br><b>3PM - 8PM</b></div></div></div>
+  <div class="hero-img"><img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600"></div>
+  <div class="card"><h3>OUR STORY</h3><p class="about-text">IRONCITY started 2021 behind Ogige. 2 sessions daily to avoid rush.</p></div>
+</div>
+
+<div id="contact" class="page">
+  <h2 class="neon">CONTACT US</h2>
+  <div class="card time-card"><h3>📍 Visit Us</h3><p>Behind Ogige Main Market, Nsukka</p><div class="time-row" style="margin-top:10px"><div>🌅 <b>7AM-11AM</b></div><div>🌇 <b>3PM-8PM</b></div></div></div>
+  <a href="tel:08123456789" class="btn outline">📞 CALL</a><a href="https://wa.me/2348123456789" class="btn outline">💬 WHATSAPP</a>
+</div>
+
+<div class="bottom-nav">
+  <button class="active" onclick="showPage('home',this)">🏠<span>Home</span></button>
+  <button onclick="showPage('plans',this)">💰<span>Plans</span></button>
+  <button onclick="showPage('register',this)">📝<span>Register</span></button>
+  <button onclick="showPage('about',this)">👥<span>About</span></button>
+  <button onclick="showPage('contact',this)">📍<span>Contact</span></button>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
