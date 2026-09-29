@@ -25,28 +25,52 @@ function filePicked(input){
     document.getElementById('uploadLabel').innerHTML='✅ Receipt selected<br><small>Tap to change</small>';
   }
 }
+
+
+const SHEET_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
+
 function validateForm(e){
   e.preventDefault();
   const name=document.getElementById('fullName').value.trim();
   const phone=document.getElementById('phone').value.trim();
+  const email=document.getElementById('email').value.trim();
   const sess=document.getElementById('session').value;
   const plan=document.getElementById('planSelect').value;
   const goal=document.getElementById('goal').value.trim();
   const isNow=document.querySelector('input[value="now"]').checked;
-  const hasFile=document.getElementById('receipt').files.length>0;
+  const fileInput=document.getElementById('receipt');
   const err=document.getElementById('errorMsg');
-  if(!name||!phone||!sess||!plan||!goal){
-    err.textContent='⚠️ Fill all fields oo - all are required';err.style.display='block';return false;
+  const btn=e.target.querySelector('button[type="submit"]');
+
+  if(!name||!phone||!email||!sess||!plan||!goal){
+    err.textContent='⚠️ Fill all fields oo';err.style.display='block';return false;
   }
-  if(isNow &&!hasFile){
-    err.textContent='⚠️ You chose Pay Immediately - please upload receipt';err.style.display='block';return false;
+  if(isNow && fileInput.files.length==0){
+    err.textContent='⚠️ Upload receipt for Pay Immediately';err.style.display='block';return false;
   }
   err.style.display='none';
-  localStorage.setItem('payMethod',isNow?'Pay Immediately':'Pay at Gym');
-  localStorage.setItem('plan',plan);
-  window.location.href='thank-you.html';
+  btn.textContent='SENDING...'; btn.disabled=true;
+
+  function sendData(receiptData){
+    fetch(SHEET_URL, { method: "POST", body: JSON.stringify({
+      name, phone, email, session:sess, plan, goal,
+      payMethod: isNow? 'Pay Immediately' : 'Pay at Gym',
+      receipt: receiptData? receiptData.base64 : "",
+      receiptName: receiptData? receiptData.name : "",
+      receiptType: receiptData? receiptData.type : ""
+    })})
+   .then(()=>{ localStorage.setItem('payMethod', isNow?'Pay Immediately':'Pay at Gym'); window.location.href='thank-you.html'; })
+   .catch(()=>{ err.textContent='⚠️ Network error'; err.style.display='block'; btn.textContent='SUBMIT REGISTRATION'; btn.disabled=false; });
+  }
+
+  if(isNow && fileInput.files[0]){
+    const reader=new FileReader();
+    reader.onload=(ev)=>{ sendData({base64: ev.target.result.split(',')[1], name: fileInput.files[0].name, type: fileInput.files[0].type}); };
+    reader.readAsDataURL(fileInput.files[0]);
+  } else { sendData(null); }
   return false;
 }
+
 function checkOpenStatus(){
   const now=new Date();const h=now.getHours();const d=now.getDay();const b=document.getElementById('openStatus');if(!b)return;
   if(d===0){b.textContent='● CLOSED TODAY';b.className='open-badge closed';return;}
@@ -54,3 +78,23 @@ function checkOpenStatus(){
   else{b.className='open-badge closed';b.textContent=h<7?'● CLOSED - Opens 7AM':h<15?'● CLOSED - Opens 3PM':'● CLOSED - Opens Tomorrow 7AM';}
 }
 window.addEventListener('load',()=>{checkOpenStatus();setInterval(checkOpenStatus,60000);document.getElementById('planSelect')?.addEventListener('change',updateAmount);});
+
+try {
+    const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
+    const result = await res.json();
+
+    if (result.status === 'already_exists') {
+      window.location.href = "already-registered.html?phone=" + data.phone;
+    } else if (result.status === 'success') {
+      window.location.href = "thank-you.html?name=" + encodeURIComponent(data.name) + "&plan=" + data.plan + "&expiry=" + result.expiryDate;
+    } else {
+      status.innerText = "Error: " + result.message;
+      btn.innerText = "REGISTER & PAY";
+      btn.disabled = false;
+    }
+  } catch (err) {
+    status.innerText = "Network error, please try again.";
+    btn.innerText = "REGISTER & PAY";
+    btn.disabled = false;
+  }
+});

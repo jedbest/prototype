@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You - IRONCITY</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="form-section" style="margin-top:50px;">
+  <div class="form-box" style="text-align:center;">
+    <div style="font-size:50px;">✅</div>
+    <div class="form-title" style="margin-top:10px;">REGISTRATION SUCCESSFUL!</div>
+    <div class="form-subtitle">Welcome to IRONCITY GYM family</div>
+    <div style="background:#000; padding:15px; border-radius:12px; border:1px solid #a6ff00; text-align:left; margin-top:20px; line-height:1.8;" id="details">
+      Loading...
+    </div>
+    <div style="margin-top:20px;">
+      <a href="index.html" class="btn-green" style="display:block; text-align:center;">Back to Home</a>
+      <a href="https://maps.google.com/?q=Ogige+Main+Market+Nsukka" target="_blank" class="btn-outline" style="display:block; text-align:center; margin-top:10px;">📍 Find Gym on Map</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  document.getElementById('details').innerHTML = `
+    <div>Name: <b style="color:#a6ff00;">${params.get('name')}</b></div>
+    <div>Plan: <b>${params.get('plan')}</b></div>
+    <div>Expiry Date: <b>${params.get('expiry')}</b></div>
+    <div style="margin-top:10px; font-size:13px; color:#aaa;">Please come to the gym with your phone number. An email has also been sent to you.</div>
+  `;
+</script>
+</body>
+</html>
