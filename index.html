@@ -11,7 +11,7 @@
     <div class="card time-card"><div class="time-row"><div>🌅 Morning<br><b>7AM - 11AM</b></div><div>🌇 Evening<br><b>3PM - 8PM</b></div></div><div class="time-note">Monday - Saturday • Closed Sunday & 11AM-3PM</div></div>
     <div class="hero-img"><img src="images/hero.png"></div>
     <p class="muted">No fake weights. Real coaches. Behind Ogige Main Market.</p>
-    <button class="btn" onclick="showPage('register')">JOIN NOW →</button>
+    <button class="btn" onclick="showPage('register', document.querySelector(`.bottom-nav button[onclick*='register']`))">Join Now</button>
   
   <div style="display: flex; justify-content: center;">
   <a href="https://www.google.com/maps/dir/?api=1&destination=Ogige+Main+Market+Nsukka" 
@@ -47,7 +47,7 @@
 
     <label>PAYMENT METHOD *</label>
     <div class="pay-options">
-      <label class="pay-card active" id="cardGym"><input type="radio" name="pay" value="gym" checked onchange="togglePay()"><span>🏦</span><b>Pay at Gym</b><small>Cash at reception</small></label>
+      <label class="pay-card active" id="cardGym"><input type="radio" name="pay" value="later" checked onchange="togglePay()"><span>🏦</span><b>Pay at Gym</b><small>Cash at reception</small></label>
       <label class="pay-card" id="cardNow"><input type="radio" name="pay" value="now" onchange="togglePay()"><span>💳</span><b>Pay Immediately</b><small>Transfer & upload receipt</small></label>
     </div>
 
@@ -66,6 +66,24 @@
     <button type="submit" class="btn">SUBMIT REGISTRATION</button>
     <p class="tiny">All fields must be filled to register</p>
   </form>
+</div>
+
+<div id="alreadyRegistered" class="page" style="display:none; text-align:center; padding:40px 20px;">
+  <div style="max-width:400px; margin:40px auto; background:#111; border:2px solid #a6ff00; border-radius:16px; padding:30px;">
+    <div style="font-size:50px;">⚠️</div>
+    <h2 style="color:#a6ff00; margin:15px 0;">Already Registered</h2>
+    <p style="color:#ccc; font-size:14px; line-height:1.5;">
+      This phone number <b id="dupPhone" style="color:#fff;"></b> is already in our system.
+    </p>
+    <div style="background:#000; padding:15px; border-radius:10px; margin:15px 0; text-align:left; font-size:13px;">
+      <div>Name: <b id="dupName" style="color:#a6ff00;"></b></div>
+      <div>Plan: <span id="dupPlan"></span></div>
+      <div>Expires: <b id="dupExpiry" style="color:orange;"></b></div>
+      <div>Status: <b id="dupStatus"></b></div>
+    </div>
+    <button class="btn btn-green" onclick="showPage('home', document.querySelector('.bottom-nav button:nth-child(1)'))" style="width:100%; padding:12px; border-radius:10px; background:#a6ff00; color:#000; font-weight:900; border:none; cursor:pointer;">Back to Home</button>
+    <p style="color:#666; font-size:11px; margin-top:10px;">If you want to renew, visit gym or contact admin.</p>
+  </div>
 </div>
 
 <div id="about" class="page">

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRONCITY ADMIN</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{background:#000;color:#fff;padding:15px;}
+h1{color:#a6ff00;text-align:center;margin-top:10px;}
+h2{margin-top:25px;font-size:16px;}
+#loginBox{max-width:350px;margin:80px auto;background:#111;padding:25px;border-radius:16px;border:2px solid #a6ff00;text-align:center;}
+#dashboard{display:none;}
+.search{width:100%;padding:14px;border-radius:12px;background:#111;border:1px solid #333;color:#fff;margin:15px 0 5px 0;}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:15px 0;}
+.card-stat{background:#111;border:1px solid #333;padding:15px;border-radius:12px;text-align:center;}
+.card-stat b{color:#a6ff00;font-size:20px;display:block;margin-top:5px;}
+.table-wrap{overflow:auto;margin-top:10px;}
+table{width:100%;border-collapse:collapse;background:#111;border-radius:12px;overflow:hidden;font-size:13px;}
+th{background:#a6ff00;color:#000;padding:10px;text-align:left;font-size:11px;}
+td{padding:10px;border-bottom:1px solid #222;text-align:left;}
+.count{display:inline-block;padding:3px 10px;border-radius:20px;font-weight:800;margin-left:8px;font-size:12px;}
+.badge-active{color:#a6ff00;font-weight:800;}
+.badge-today{color:orange;font-weight:800;}
+.badge-expired{color:red;font-weight:800;}
+.btn{border:none;padding:10px 15px;border-radius:8px;font-weight:900;cursor:pointer;}
+.btn-green{background:#a6ff00;color:#000;width:100%;}
+.btn-wa{background:#a6ff00;color:#000;padding:5px 10px;border-radius:8px;text-decoration:none;font-size:11px;font-weight:800;}
+.btn-paid{background:orange;color:#000;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;border:none;}
+#addBox{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:99;padding:15px;overflow:auto;}
+#addBox .inner{max-width:400px;margin:30px auto;background:#111;border:2px solid #a6ff00;padding:20px;border-radius:16px;}
+#addBox input, #addBox select{width:100%;padding:12px;margin:6px 0;border-radius:8px;background:#000;border:1px solid #333;color:#fff;}
+#searchInfo{font-size:12px;color:#a6ff00;margin-left:5px;}
+</style>
+</head>
+<body>
+
+<div id="loginBox">
+  <div style="color:#a6ff00;font-weight:900;font-size:20px;">🔒 ADMIN LOGIN</div>
+  <div style="color:#666;font-size:12px;margin-bottom:15px;">IRONCITY GYM ONLY</div>
+  <input type="password" id="passInput" placeholder="Enter Password" class="search" style="margin:0 0 10px 0;">
+  <button class="btn btn-green" onclick="checkPassword()">UNLOCK</button>
+  <div id="loginError" style="color:red;font-size:13px;margin-top:10px;"></div>
+</div>
+
+<div id="dashboard">
+  <h1>IRONCITY ADMIN</h1>
+  <div style="text-align:center;color:#666;font-size:12px;">Behind Ogige Main Market <br><button onclick="logout()" style="width:auto;padding:4px 10px;background:#222;color:#fff;font-size:11px;margin-top:5px;border:none;border-radius:5px;cursor:pointer;">Logout</button></div>
+
+  <div class="stats">
+    <div class="card-stat"><span>Total</span><b id="total">0</b></div>
+    <div class="card-stat"><span>🟢 Active</span><b id="active">0</b></div>
+    <div class="card-stat"><span>🔴 Expired</span><b id="expired">0</b></div>
+  </div>
+  <div class="stats">
+    <div class="card-stat"><span>💰 Revenue</span><b id="revenue">₦0</b></div>
+    <div class="card-stat"><span>🟡 Today</span><b id="soon">0</b></div>
+    <div class="card-stat"><span>Today</span><b id="todayDate"></b></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <button class="btn btn-green" onclick="loadMembers()">🔄 Refresh</button>
+    <button class="btn btn-green" style="background:#fff;color:#000;" onclick="document.getElementById('addBox').style.display='block'">+ Add Member</button>
+  </div>
+  
+  <input type="text" id="search" class="search" placeholder="🔍 Search name, phone, plan..." oninput="filterTable()">
+  <div id="searchInfo"></div>
+
+  <h2>🟡 EXPIRES TODAY <span id="todayCount" class="count" style="background:orange;color:#000;">0</span></h2>
+  <div class="table-wrap"><table id="todayTable"><thead><tr><th>Name</th><th>Phone</th><th>Plan</th><th>Action</th></tr></thead><tbody><tr><td colspan="4">Loading...</td></tr></tbody></table></div>
+
+  <h2>🟢 ACTIVE <span id="activeCount" class="count" style="background:#a6ff00;color:#000;">0</span></h2>
+  <div class="table-wrap"><table id="activeTable"><thead><tr><th>Name</th><th>Phone</th><th>Plan</th><th>Expires</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="6">Loading...</td></tr></tbody></table></div>
+
+  <h2>🔴 EXPIRED <span id="expiredCount" class="count" style="background:red;color:#fff;">0</span></h2>
+  <div class="table-wrap"><table id="expiredTable"><thead><tr><th>Name</th><th>Phone</th><th>Plan</th><th>Expired On</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="6">Loading...</td></tr></tbody></table></div>
+</div>
+
+<div id="addBox">
+  <div class="inner">
+    <h2 style="color:#a6ff00;margin-bottom:10px;">+ Add Member Manually</h2>
+    <input id="addName" placeholder="Full Name">
+    <input id="addPhone" placeholder="Phone e.g 081...">
+    <select id="addPlan">
+      <option value="">Select Plan</option>
+      <option value="Daily Without Coaching">Daily Without Coaching - ₦1500</option>
+      <option value="Daily With Coaching">Daily With Coaching - ₦2500</option>
+      <option value="Monthly Without Coaching">Monthly Without Coaching - ₦12000</option>
+      <option value="Monthly With Coaching">Monthly With Coaching - ₦20000</option>
+    </select>
+    <select id="addSession">
+      <option value="">Select Session</option>
+      <option>Morning 7AM-11AM</option>
+      <option>Evening 3PM-7PM</option>
+    </select>
+    <select id="addPay">
+      <option value="Pay at Gym">Pay at Gym (Unpaid - ₦0)</option>
+      <option value="Pay Immediately">Paid Cash / Transfer (Count Revenue)</option>
+    </select>
+    <button class="btn btn-green" style="margin-top:10px;" onclick="addMemberManually()">Add Member</button>
+    <button class="btn" style="width:100%;margin-top:8px;background:#222;color:#fff;" onclick="document.getElementById('addBox').style.display='none'">Cancel</button>
+    <div id="addMsg" style="margin-top:10px;font-size:12px;"></div>
+  </div>
+</div>
+
+<script>
+const ADMIN_PASSWORD = "IronCity2024";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJu69LzD43DvMcqaYm7U8GvlmRorUkrqhj0IDfsx-X2JXQZSVpsUgf63PJIwf87EK4/exec";
+
+function checkPassword(){
+  if(document.getElementById('passInput').value === ADMIN_PASSWORD){
+    localStorage.setItem('ironcity_admin','true');
+    showDashboard();
+  } else { document.getElementById('loginError').innerText = "Wrong password!"; }
+}
+function showDashboard(){
+  document.getElementById('loginBox').style.display="none";
+  document.getElementById('dashboard').style.display="block";
+  loadMembers();
+}
+function logout(){ localStorage.removeItem('ironcity_admin'); location.reload(); }
+if(localStorage.getItem('ironcity_admin') === 'true'){ showDashboard(); }
+
+// === FIXED SEARCH - WON'T HIDE HEADERS ===
+function filterTable(){
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  const info = document.getElementById('searchInfo');
+  let visibleCount = 0;
+  let totalRows = 0;
+
+  document.querySelectorAll('table tbody tr').forEach(tr=>{
+    // skip "No members" placeholder rows
+    if(tr.innerText.includes('No one') || tr.innerText.includes('No active') || tr.innerText.includes('No expired') || tr.innerText.includes('Loading')){
+      return;
+    }
+    totalRows++;
+    const show = q === '' || tr.innerText.toLowerCase().includes(q);
+    tr.style.display = show? '' : 'none';
+    if(show) visibleCount++;
+  });
+
+  if(q){
+    info.textContent = visibleCount>0? `✅ ${visibleCount} found for "${q}"` : `❌ No results for "${q}"`;
+  } else {
+    info.textContent = '';
+  }
+}
+
+function getExpiryFromPlan(plan){
+  const d=new Date(); const p=plan.toLowerCase();
+  if(p.includes("daily")) d.setDate(d.getDate()+1); else d.setMonth(d.getMonth()+1);
+  return d.toISOString().split('T')[0];
+}
+function parseDate(str){
+  if(!str) return null;
+  const s = String(str).trim();
+  if(s.includes('T') || s.match(/^\d{4}-\d{2}-\d{2}/)){
+    const d=new Date(s); if(!isNaN(d)){d.setHours(0,0,0,0);return d;}
+  }
+  if(s.includes('/')){
+    const p=s.split('/');
+    if(p.length===3){
+      const d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));
+      if(!isNaN(d)){d.setHours(0,0,0,0);return d;}
+    }
+  }
+  const d=new Date(s); if(!isNaN(d)){d.setHours(0,0,0,0);return d;} return null;
+}
+function getPriceFromPlan(plan){
+  const p = plan.toLowerCase();
+  if(p.includes("daily") && p.includes("without")) return 1500;
+  if(p.includes("daily") && p.includes("with")) return 2500;
+  if(p.includes("monthly") && p.includes("without")) return 12000;
+  if(p.includes("monthly") && p.includes("with")) return 20000;
+  if(p.includes("daily")) return 1500;
+  return 12000;
+}
+async function addMemberManually(){
+  const name=document.getElementById('addName').value.trim();
+  const phone=document.getElementById('addPhone').value.trim();
+  const plan=document.getElementById('addPlan').value;
+  const session=document.getElementById('addSession').value;
+  const payMethod=document.getElementById('addPay').value;
+  const msg=document.getElementById('addMsg');
+  if(!name||!phone||!plan||!session){ msg.innerHTML='<span style="color:red">Fill all fields</span>'; return; }
+  msg.innerHTML='Adding...';
+  const isPaid = payMethod.includes('Immediately');
+  const price = isPaid? getPriceFromPlan(plan) : 0;
+  const expiry = getExpiryFromPlan(plan);
+  const data = { name, phone, email: `${phone}@ironcity.com`, session, plan, goal: "general", payMethod, price, amount: price, expiry };
+  try{
+    await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(data)});
+    msg.innerHTML='<span style="color:#a6ff00">✅ Added! Refreshing...</span>';
+    setTimeout(()=>{ document.getElementById('addBox').style.display='none'; loadMembers(); document.getElementById('addName').value=''; document.getElementById('addPhone').value=''; msg.innerHTML=''; },1200);
+  }catch(e){ msg.innerHTML='<span style="color:red">Error: '+e.message+'</span>'; }
+}
+async function markAsPaid(phone, plan){
+  if(!confirm('Mark this member as PAID? Revenue will count.')) return;
+  const price = getPriceFromPlan(plan);
+  const data = { action:"markPaid", phone: String(phone), price: price };
+  try{
+    await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(data)});
+    alert('✅ Marked as Paid! Refresh after 3 secs');
+    setTimeout(loadMembers,3000);
+  }catch(e){ alert('Error: '+e.message); }
+}
+async function loadMembers(){
+  document.getElementById('todayDate').innerText = new Date().toDateString().slice(4);
+  try{
+    const res = await fetch(SCRIPT_URL);
+    const data = await res.json();
+    let total=0, active=0, expired=0, soon=0, revenue=0;
+    let todayHTML="", activeHTML="", expiredHTML="";
+    const today = new Date(); today.setHours(0,0,0,0);
+    data.reverse().forEach(m=>{
+      if(!m.name) return; total++;
+      const amt = parseInt(m.amount || m.price || 0) || 0;
+      if(amt > 0){ revenue += amt; }
+      const isPaid = amt > 0;
+      const expiry = parseDate(m.expiryDate || m.expiry); if(!expiry) return;
+      expiry.setHours(0,0,0,0);
+      const diff = Math.ceil((expiry - today)/(1000*60*60*24));
+      const cleanPhone = String(m.phone||'').replace(/[^0-9]/g,'');
+      const waPhone = cleanPhone.startsWith('0')? '234'+cleanPhone.slice(1) : cleanPhone;
+      const waLink = `https://wa.me/${waPhone}`;
+      const paidBtn =!isPaid? `<button class="btn-paid" onclick="markAsPaid('${m.phone}','${m.plan}')">Mark Paid</button>` : `<small style="color:#a6ff00">Paid ₦${amt.toLocaleString()}</small>`;
+      if(diff < 0){
+        expired++;
+        expiredHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td>${expiry.toDateString().slice(4)}</td><td class="badge-expired">🔴 Expired</td><td>${paidBtn}</td></tr>`;
+      } else {
+        active++;
+        activeHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td>${expiry.toDateString().slice(4)} <small style="color:#666">(${diff}d)</small></td><td class="${diff===0?'badge-today':'badge-active'}">${diff===0?'🟡 Today':'🟢 Active'}</td><td>${paidBtn} <a href="${waLink}" target="_blank" class="btn-wa" style="margin-left:4px;">WA</a></td></tr>`;
+        if(diff===0){ soon++; todayHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td><a href="${waLink}" target="_blank" class="btn-wa">WhatsApp</a> ${paidBtn}</td></tr>`; }
+      }
+    });
+    document.getElementById('todayTable').querySelector('tbody').innerHTML = todayHTML || `<tr><td colspan="4" style="color:#666">No one expires today</td></tr>`;
+    document.getElementById('activeTable').querySelector('tbody').innerHTML = activeHTML || `<tr><td colspan="6" style="color:#666">No active members</td></tr>`;
+    document.getElementById('expiredTable').querySelector('tbody').innerHTML = expiredHTML || `<tr><td colspan="6" style="color:#666">No expired members</td></tr>`;
+    document.getElementById('total').innerText = total;
+    document.getElementById('active').innerText = active;
+    document.getElementById('expired').innerText = expired;
+    document.getElementById('soon').innerText = soon;
+    document.getElementById('activeCount').innerText = active;
+    document.getElementById('expiredCount').innerText = expired;
+    document.getElementById('todayCount').innerText = soon;
+    document.getElementById('revenue').innerText = "₦"+revenue.toLocaleString();
+    // re-apply search if user already typed
+    if(document.getElementById('search').value) filterTable();
+  }catch(e){
+    document.querySelectorAll('tbody').forEach(tb=> tb.innerHTML = `<tr><td colspan="6">Error: ${e.message}</td></tr>`);
+  }
+}
+</script>
+</body>
+</html>
