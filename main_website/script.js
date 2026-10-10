@@ -121,28 +121,36 @@ async function validateForm(e){
     const members = await checkRes.json();
     const existing = members[0];
 
-    if(existing){
-      const alreadySec = document.getElementById('alreadyRegistered');
-      if(alreadySec){
-        document.getElementById('dupPhone').innerText = existing.phone;
-        document.getElementById('dupName').innerText = existing.name;
-        document.getElementById('dupPlan').innerText = existing.plan;
-        const exp = existing.expiryDate || existing.expiry || '';
-        document.getElementById('dupExpiry').innerText = exp;
-        const expD = parseDateCheck(exp);
-        const isExp = expD? expD < new Date().setHours(0,0,0,0) : false;
-        document.getElementById('dupStatus').innerText = isExp? "🔴 Expired - Please Renew" : "🟢 Active";
-        document.querySelectorAll('.page, section').forEach(p=> p.style.display='none');
-        alreadySec.style.display='block';
-        document.querySelectorAll('.bottom-nav button').forEach(b=> b.classList.remove('active'));
-        window.scrollTo(0,0);
-      } else {
-        err.textContent = `⚠️ Phone ${existing.phone} already registered as ${existing.name}. Expires: ${existing.expiryDate||existing.expiry}`;
-        err.style.display='block';
+     if(existing){
+      const exp = existing.expiryDate || existing.expiry || '';
+      const expD = parseDateCheck(exp);
+      const today = new Date(); today.setHours(0,0,0,0);
+      const isExpired = expD ? expD < today : true;
+      const status = String(existing.status || "").toLowerCase();
+      const isActive = status === "paid" && !isExpired;
+
+      if(isActive){
+        // PHONE + ACTIVE = BLOCK
+        const alreadySec = document.getElementById('alreadyRegistered');
+        if(alreadySec){
+          document.getElementById('dupPhone').innerText = existing.phone;
+          document.getElementById('dupName').innerText = existing.name;
+          document.getElementById('dupPlan').innerText = existing.plan;
+          document.getElementById('dupExpiry').innerText = exp;
+          document.getElementById('dupStatus').innerText = "🟢 Active";
+          document.querySelectorAll('.page, section').forEach(p=> p.style.display='none');
+          alreadySec.style.display='block';
+          document.querySelectorAll('.bottom-nav button').forEach(b=> b.classList.remove('active'));
+          window.scrollTo(0,0);
+        } else {
+          err.textContent = `⚠️ Phone ${existing.phone} already active as ${existing.name}. Expires: ${exp}`;
+          err.style.display='block';
+        }
+        submitBtn.innerText = "SUBMIT REGISTRATION";
+        submitBtn.disabled = false;
+        return false;
       }
-      submitBtn.innerText = "SUBMIT REGISTRATION";
-      submitBtn.disabled = false;
-      return false;
+      // IF EXPIRED -> DO NOT BLOCK, ALLOW TO CONTINUE REGISTERING
     }
 
     // === 2. IF NOT EXISTING, CONTINUE ===

@@ -31,6 +31,7 @@ td{padding:10px;border-bottom:1px solid #222;text-align:left;}
 #addBox .inner{max-width:400px;margin:30px auto;background:#111;border:2px solid #a6ff00;padding:20px;border-radius:16px;}
 #addBox input, #addBox select{width:100%;padding:12px;margin:6px 0;border-radius:8px;background:#000;border:1px solid #333;color:#fff;}
 #searchInfo{font-size:12px;color:#a6ff00;margin-left:5px;}
+.btn-cancel{background:#ff3333;color:#fff;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;border:none;margin-left:4px;}
 </style>
 </head>
 <body>
@@ -166,14 +167,52 @@ function parseDate(str){
   }
   const d=new Date(s); if(!isNaN(d)){d.setHours(0,0,0,0);return d;} return null;
 }
+let rawDataCache = [];
+
 function getPriceFromPlan(plan){
-  const p = plan.toLowerCase();
+  const p = String(plan||"").toLowerCase().trim();
+  if(p === "daily without coaching") return 1500;
+  if(p === "daily with coaching") return 2500;
+  if(p === "monthly without coaching") return 12000;
+  if(p === "monthly with coaching") return 20000;
   if(p.includes("daily") && p.includes("without")) return 1500;
   if(p.includes("daily") && p.includes("with")) return 2500;
   if(p.includes("monthly") && p.includes("without")) return 12000;
   if(p.includes("monthly") && p.includes("with")) return 20000;
-  if(p.includes("daily")) return 1500;
-  return 12000;
+  return 1500;
+}
+async function markAsPaid(phone, plan, btn){
+  if(btn){ btn.innerText = "Checking..."; btn.disabled = true; }
+  const price = getPriceFromPlan(plan);
+  const target = String(phone).replace(/[^0-9]/g,'').slice(-10);
+
+  // CHECK LOCALLY IF ALREADY HAS ACTIVE PAID
+  const today = new Date(); today.setHours(0,0,0,0);
+  const hasActivePaid = rawDataCache.some(m=>{
+    const p = String(m.phone||'').replace(/[^0-9]/g,'').slice(-10);
+    const amt = parseInt(m.amount||m.price||0)||0;
+    const exp = parseDate(m.expiryDate||m.expiry);
+    return p===target && amt>0 && exp && exp>=today;
+  });
+  if(hasActivePaid){
+    alert("⚠️ Already has ACTIVE paid registration for this number! You cannot Mark Paid again. Use CANCEL to remove duplicate.");
+    if(btn){ btn.innerText="Mark Paid"; btn.disabled=false; }
+    return;
+  }
+
+  if(!confirm('Mark as PAID ₦'+price.toLocaleString()+' for '+plan+'?')){ if(btn){ btn.innerText="Mark Paid"; btn.disabled=false; } return; }
+  try{
+    await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify({action:"markPaid", phone: String(phone), price: Number(price)})});
+    alert('✅ Marked as Paid ₦'+price.toLocaleString());
+    setTimeout(loadMembers,4000);
+  }catch(e){ alert('Error: '+e.message); if(btn){ btn.innerText="Mark Paid"; btn.disabled=false; } }
+}
+async function cancelMember(phone, btn){
+  if(!confirm('Delete?')) return;
+  if(btn){ btn.innerText="Deleting..."; btn.disabled=true; }
+  await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify({action:"cancel", phone: phone})});
+  alert('✅ Deleted - wait 4 seconds');
+  setTimeout(loadMembers,4000);
 }
 async function addMemberManually(){
   const name=document.getElementById('addName').value.trim();
@@ -194,21 +233,12 @@ async function addMemberManually(){
     setTimeout(()=>{ document.getElementById('addBox').style.display='none'; loadMembers(); document.getElementById('addName').value=''; document.getElementById('addPhone').value=''; msg.innerHTML=''; },1200);
   }catch(e){ msg.innerHTML='<span style="color:red">Error: '+e.message+'</span>'; }
 }
-async function markAsPaid(phone, plan){
-  if(!confirm('Mark this member as PAID? Revenue will count.')) return;
-  const price = getPriceFromPlan(plan);
-  const data = { action:"markPaid", phone: String(phone), price: price };
-  try{
-    await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(data)});
-    alert('✅ Marked as Paid! Refresh after 3 secs');
-    setTimeout(loadMembers,3000);
-  }catch(e){ alert('Error: '+e.message); }
-}
 async function loadMembers(){
   document.getElementById('todayDate').innerText = new Date().toDateString().slice(4);
   try{
-    const res = await fetch(SCRIPT_URL);
+    const res = await fetch(SCRIPT_URL + "?t=" + Date.now(), {cache: "no-store"});
     const data = await res.json();
+    rawDataCache = data;
     let total=0, active=0, expired=0, soon=0, revenue=0;
     let todayHTML="", activeHTML="", expiredHTML="";
     const today = new Date(); today.setHours(0,0,0,0);
@@ -220,18 +250,46 @@ async function loadMembers(){
       const expiry = parseDate(m.expiryDate || m.expiry); if(!expiry) return;
       expiry.setHours(0,0,0,0);
       const diff = Math.ceil((expiry - today)/(1000*60*60*24));
-      const cleanPhone = String(m.phone||'').replace(/[^0-9]/g,'');
-      const waPhone = cleanPhone.startsWith('0')? '234'+cleanPhone.slice(1) : cleanPhone;
-      const waLink = `https://wa.me/${waPhone}`;
-      const paidBtn =!isPaid? `<button class="btn-paid" onclick="markAsPaid('${m.phone}','${m.plan}')">Mark Paid</button>` : `<small style="color:#a6ff00">Paid ₦${amt.toLocaleString()}</small>`;
-      if(diff < 0){
-        expired++;
-        expiredHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td>${expiry.toDateString().slice(4)}</td><td class="badge-expired">🔴 Expired</td><td>${paidBtn}</td></tr>`;
-      } else {
-        active++;
-        activeHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td>${expiry.toDateString().slice(4)} <small style="color:#666">(${diff}d)</small></td><td class="${diff===0?'badge-today':'badge-active'}">${diff===0?'🟡 Today':'🟢 Active'}</td><td>${paidBtn} <a href="${waLink}" target="_blank" class="btn-wa" style="margin-left:4px;">WA</a></td></tr>`;
-        if(diff===0){ soon++; todayHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td><a href="${waLink}" target="_blank" class="btn-wa">WhatsApp</a> ${paidBtn}</td></tr>`; }
-      }
+const cleanPhone = String(m.phone||'').replace(/[^0-9]/g,'');
+const waPhone = cleanPhone.startsWith('0')? '234'+cleanPhone.slice(1) : cleanPhone;
+const waLink = `https://wa.me/${waPhone}`;
+
+// Cancel only for unpaid or expired
+let cancelBtn = "";
+let markPaidBtn = "";
+
+if (!isPaid) {
+  // Unpaid - show both Mark Paid and Cancel
+  cancelBtn = `<button class="btn-cancel" style="background:#ff3333;color:#fff;padding:4px 8px;border-radius:6px;font-size:10px;border:none;cursor:pointer;" onclick="cancelMember('${m.phone}', this)">Cancel</button>`;
+  markPaidBtn = `<button class="btn-paid" onclick="markAsPaid('${m.phone}','${m.plan}', this)">Mark Paid</button>`;
+} else {
+  // Paid - no cancel if still active
+  markPaidBtn = `<span style="color:#a6ff00;font-weight:700;white-space:nowrap;">Paid ₦${amt.toLocaleString()}</span>`;
+}
+
+const paidAndCancel = `<div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">${markPaidBtn} ${cancelBtn}</div>`;
+const actionCellActive = `<div style="display:flex;align-items:center;gap:8px;white-space:nowrap;">${paidAndCancel} <a href="${waLink}" target="_blank" class="btn-wa" style="background:#a6ff00;color:#000;padding:5px 14px;border-radius:20px;font-weight:800;text-decoration:none;">WA</a></div>`;
+
+// For expired - always show cancel even if paid
+const expiredCancelBtn = `<button class="btn-cancel" style="background:#ff3333;color:#fff;padding:4px 8px;border-radius:6px;font-size:10px;border:none;cursor:pointer;" onclick="cancelMember('${m.phone}', this)">Cancel</button>`;
+const actionCellExpired = `<div style="display:flex;align-items:center;gap:8px;white-space:nowrap;">${!isPaid ? markPaidBtn : `<span style="color:#a6ff00;font-weight:700;">Paid ₦${amt.toLocaleString()}</span>`} ${expiredCancelBtn} <a href="${waLink}" target="_blank" class="btn-wa" style="background:#a6ff00;color:#000;padding:5px 14px;border-radius:20px;font-weight:800;text-decoration:none;">WA</a></div>`;
+
+if(diff < 0){
+  expired++;
+  expiredHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td>${expiry.toDateString().slice(4)}</td><td class="badge-expired"><span class="dot dot-expired"></span> Expired</td><td>${actionCellExpired}</td></tr>`;
+} else {
+  active++;
+  const statusBadge = diff===0 ? `<span class="dot dot-today"></span> <span style="color:#ffaa00;font-weight:700">Today</span>` : `<span class="dot dot-active"></span> Active`;
+  // Active paid = NO cancel
+  const activePaidPart = isPaid ? `<span style="color:#a6ff00;font-weight:700;white-space:nowrap;">Paid ₦${amt.toLocaleString()}</span>` : `${markPaidBtn} ${cancelBtn}`;
+  const finalActionActive = `<div style="display:flex;align-items:center;gap:8px;white-space:nowrap;">${activePaidPart} <a href="${waLink}" target="_blank" class="btn-wa" style="background:#a6ff00;color:#000;padding:5px 14px;border-radius:20px;font-weight:800;text-decoration:none;">WA</a></div>`;
+  
+  activeHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td>${expiry.toDateString().slice(4)} <small style="color:#666">(${diff}d)</small></td><td>${statusBadge}</td><td>${finalActionActive}</td></tr>`;
+  if(diff===0){ 
+    soon++; 
+    todayHTML += `<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td>${finalActionActive}</td></tr>`; 
+  }
+    }
     });
     document.getElementById('todayTable').querySelector('tbody').innerHTML = todayHTML || `<tr><td colspan="4" style="color:#666">No one expires today</td></tr>`;
     document.getElementById('activeTable').querySelector('tbody').innerHTML = activeHTML || `<tr><td colspan="6" style="color:#666">No active members</td></tr>`;
@@ -244,7 +302,6 @@ async function loadMembers(){
     document.getElementById('expiredCount').innerText = expired;
     document.getElementById('todayCount').innerText = soon;
     document.getElementById('revenue').innerText = "₦"+revenue.toLocaleString();
-    // re-apply search if user already typed
     if(document.getElementById('search').value) filterTable();
   }catch(e){
     document.querySelectorAll('tbody').forEach(tb=> tb.innerHTML = `<tr><td colspan="6">Error: ${e.message}</td></tr>`);
