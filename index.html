@@ -1,128 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IRONCITY GYM - Nsukka</title><link rel="stylesheet" href="styles.css"></head>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>IRONCITY ADMIN</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}body{background:#000;color:#fff;padding:15px}h1{color:#a6ff00;text-align:center;margin-top:10px}h2{margin-top:25px;font-size:16px}#loginBox{max-width:350px;margin:80px auto;background:#111;padding:25px;border-radius:16px;border:2px solid #a6ff00;text-align:center}#dashboard{display:none}.search{width:100%;padding:14px;border-radius:12px;background:#111;border:1px solid #333;color:#fff;margin:15px 0 5px 0}.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:15px 0}.card-stat{background:#111;border:1px solid #333;padding:15px;border-radius:12px;text-align:center}.card-stat b{color:#a6ff00;font-size:20px;display:block;margin-top:5px}.table-wrap{overflow:auto;margin-top:10px}table{width:100%;border-collapse:collapse;background:#111;border-radius:12px;overflow:hidden;font-size:13px}th{background:#a6ff00;color:#000;padding:10px;text-align:left;font-size:11px}td{padding:10px;border-bottom:1px solid #222;text-align:left}.count{display:inline-block;padding:3px 10px;border-radius:20px;font-weight:800;margin-left:8px;font-size:12px}.btn{border:none;padding:10px 15px;border-radius:8px;font-weight:900;cursor:pointer}.btn-green{background:#a6ff00;color:#000;width:100%}.btn-wa{background:#a6ff00;color:#000;padding:5px 10px;border-radius:8px;text-decoration:none;font-size:11px;font-weight:800}.btn-paid{background:orange;color:#000;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;border:none}#addBox{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:99;padding:15px;overflow:auto}#addBox .inner{max-width:400px;margin:30px auto;background:#111;border:2px solid #a6ff00;padding:20px;border-radius:16px}#addBox input,#addBox select{width:100%;padding:12px;margin:6px 0;border-radius:8px;background:#000;border:1px solid #333;color:#fff}#searchInfo{font-size:12px;color:#a6ff00;margin-left:5px}.btn-cancel{background:#ff3333;color:#fff;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;border:none;margin-left:4px}.days-control{display:flex;align-items:center;gap:6px;background:#111;border:1px solid #333;border-radius:10px;padding:6px}.days-control input{width:70px;text-align:center;background:#000;color:#a6ff00;font-weight:900;border:1px solid #333;border-radius:8px;padding:8px}.days-control button{width:36px;height:36px;border-radius:8px;border:none;font-weight:900;cursor:pointer;background:#222;color:#fff}.icon-btn{width:36px;height:36px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;font-size:16px}
+/* ADDED ONLY FOR RECEIPT MODAL */
+#receiptModal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:200;padding:15px;overflow:auto;align-items:center;justify-content:center}
+#receiptModal .inner{max-width:500px;width:100%;margin:20px auto;background:#111;border:2px solid #a6ff00;border-radius:16px;padding:15px}
+#receiptModal img,#receiptModal iframe{width:100%;max-height:80vh;border-radius:12px;background:#000}
+</style>
+</head>
 <body>
-<header><div class="logo">IRONCITY</div><div id="openStatus" class="open-badge">● CHECKING...</div></header>
-
-<div id="home" class="page active">
-  <div class="hero">
-    <p class="small-neon">NSUKKA'S HARDEST GYM</p><h1>BUILD YOUR <span>STRENGTH</span></h1>
-    <div class="card time-card"><div class="time-row"><div>🌅 Morning<br><b>7AM - 11AM</b></div><div>🌇 Evening<br><b>3PM - 8PM</b></div></div><div class="time-note">Monday - Saturday • Closed Sunday & 11AM-3PM</div></div>
-    <div class="hero-img"><img src="images/hero.png"></div>
-    <p class="muted">No fake weights. Real coaches. Behind Ogige Main Market.</p>
-    <button class="btn" onclick="showPage('register', document.querySelector(`.bottom-nav button[onclick*='register']`))">Join Now</button>
-  
-  <div style="display: flex; justify-content: center;">
-  <a href="https://www.google.com/maps/dir/?api=1&destination=Ogige+Main+Market+Nsukka" 
-   target="_blank"
-   style="background:transparent; border:1.5px solid var(--neon); color:var(--neon); padding:12px 22px; border-radius:10px; font-weight:900; text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-top: 10px;">
-   📍 MAP
-</a>
+<div id="loginBox">
+  <div style="color:#a6ff00;font-weight:900;font-size:20px">🔒 ADMIN LOGIN</div>
+  <div style="color:#666;font-size:12px;margin-bottom:15px">IRONCITY GYM ONLY</div>
+  <input type="password" id="passInput" placeholder="Enter Password" class="search" style="margin:0 0 10px 0">
+  <button class="btn btn-green" onclick="checkPassword()">UNLOCK</button>
+  <div id="loginError" style="color:red;font-size:13px;margin-top:10px"></div>
 </div>
+<div id="dashboard">
+  <h1>IRONCITY ADMIN</h1>
+  <div style="text-align:center;color:#666;font-size:12px">Behind Ogige Main Market <br><button onclick="logout()" style="width:auto;padding:4px 10px;background:#222;color:#fff;font-size:11px;margin-top:5px;border:none;border-radius:5px;cursor:pointer">Logout</button></div>
+  <div class="stats">
+    <div class="card-stat"><span>Total</span><b id="total">0</b></div>
+    <div class="card-stat"><span>🟢 Active</span><b id="active">0</b></div>
+    <div class="card-stat"><span>🔴 Expired</span><b id="expired">0</b></div>
+  </div>
+  <div class="stats">
+    <div class="card-stat"><span>💰 Revenue</span><b id="revenue">₦0</b></div>
+    <div class="card-stat"><span>🟡 Today</span><b id="soon">0</b></div>
+    <div class="card-stat"><span>Today</span><b id="todayDate"></b></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <button class="btn btn-green" onclick="loadMembers()">🔄 Refresh</button>
+    <button class="btn btn-green" style="background:#fff;color:#000" onclick="document.getElementById('addBox').style.display='block'">+ Add Member</button>
+  </div>
+  <input type="text" id="search" class="search" placeholder="🔍 Search ANYTHING - name, phone, ID, plan, coaching..." oninput="filterTable()">
+  <div id="searchInfo"></div>
+  <h2>🟡 EXPIRES TODAY <span id="todayCount" class="count" style="background:orange;color:#000">0</span></h2>
+  <div class="table-wrap"><table id="todayTable"><thead><tr><th>Name</th><th>Phone</th><th>Plan</th><th>Action</th></tr></thead><tbody><tr><td colspan="4">Loading...</td></tr></tbody></table></div>
+  <h2>🟢 ACTIVE <span id="activeCount" class="count" style="background:#a6ff00;color:#000">0</span></h2>
+  <div class="table-wrap"><table id="activeTable"><thead><tr><th>Name</th><th>Phone</th><th>Plan</th><th>Expires</th><th>Status</th><th>Manage</th></tr></thead><tbody><tr><td colspan="6">Loading...</td></tr></tbody></table></div>
+  <h2>🔴 EXPIRED <span id="expiredCount" class="count" style="background:red;color:#fff">0</span></h2>
+  <div class="table-wrap"><table id="expiredTable"><thead><tr><th>Name</th><th>Phone</th><th>Plan</th><th>Expired On</th><th>Status</th><th>Manage</th></tr></thead><tbody><tr><td colspan="6">Loading...</td></tr></tbody></table></div>
+</div>
+<div id="addBox">
+  <div class="inner">
+    <h2 style="color:#a6ff00;margin-bottom:10px">+ Add Member Manually</h2>
+    <input id="addName" placeholder="Full Name">
+    <input id="addPhone" placeholder="Phone e.g 081...">
+    <select id="addPlan">
+      <option value="">Select Plan</option>
+      <option value="Daily Without Coaching">Daily Without Coaching - ₦1500</option>
+      <option value="Daily With Coaching">Daily With Coaching - ₦2500</option>
+      <option value="Weekly Without Coaching">Weekly Without Coaching - ₦7000</option>
+      <option value="Weekly With Coaching">Weekly With Coaching - ₦10000</option>
+      <option value="2 Weeks Without Coaching">2 Weeks Without Coaching - ₦12000</option>
+      <option value="2 Weeks With Coaching">2 Weeks With Coaching - ₦16000</option>
+      <option value="Monthly Without Coaching">Monthly Without Coaching - ₦12000</option>
+      <option value="Monthly With Coaching">Monthly With Coaching - ₦20000</option>
+    </select>
+    <select id="addSession"><option value="">Select Session</option><option>Morning 7AM-11AM</option><option>Evening 3PM-7PM</option></select>
+    <select id="addPay"><option value="Pay at Gym">Pay at Gym (Unpaid - ₦0)</option><option value="Pay Immediately">Paid Cash / Transfer (Count Revenue)</option></select>
+    <button class="btn btn-green" style="margin-top:10px" onclick="addMemberManually()">Add Member</button>
+    <button class="btn" style="width:100%;margin-top:8px;background:#222;color:#fff" onclick="document.getElementById('addBox').style.display='none'">Cancel</button>
+    <div id="addMsg" style="margin-top:10px;font-size:12px"></div>
   </div>
 </div>
 
-<div id="plans" class="page">
-  <h2>CHOOSE YOUR <span class="neon">PLAN</span></h2><p class="muted-sm">Open 7-11AM & 3-8PM daily</p>
-  <div class="card plan-card" onclick="selectPlan(this,'Daily Without Coaching')"><h3>Daily • Without Coaching</h3><div class="price">₦1,500 / day</div></div>
-  <div class="card plan-card" onclick="selectPlan(this,'Daily With Coaching')"><span class="badge">BEGINNER FRIENDLY</span><h3>Daily • With Coaching</h3><div class="price">₦2,500 / day</div></div>
-  <div class="card plan-card" onclick="selectPlan(this,'Monthly Without Coaching')"><h3>Monthly • Without Coaching</h3><div class="price">₦12,000 / month</div></div>
-  <div class="card plan-card selected" onclick="selectPlan(this,'Monthly With Coaching')"><span class="badge">MOST POPULAR</span><h3>Monthly • With Coaching</h3><div class="price">₦20,000 / month</div></div>
-  <button class="btn" onclick="showPage('register')">REGISTER WITH THIS PLAN</button>
-</div>
-
-<div id="register" class="page">
-  <h2 class="neon">GYM REGISTRATION</h2>
-  <div class="card time-card small"><b>⏰ Open: 7-11AM & 3-8PM Daily</b></div>
-  <form id="gymForm" onsubmit="return validateForm(event)">
-    <label>FULL NAME *</label><input type="text" id="fullName" placeholder="Alex Morgan" required>
-    <label>PHONE (WhatsApp) *</label><input type="tel" id="phone" placeholder="081..." required>
-    <label>EMAIL (for reminder) *</label><input type="email" id="email" placeholder="alex@gmail.com" required>
-    <label>PREFERRED SESSION *</label>
-    <select id="session" required><option value="">When will you train?</option><option>Morning 7AM-11AM</option><option>Evening 3PM-8PM</option><option>Both Sessions</option></select>
-    <label>PLAN *</label>
-    <select id="planSelect" required><option value="">Select plan</option><option value="Daily Without Coaching">Daily Without Coaching - ₦1,500</option><option value="Daily With Coaching">Daily With Coaching - ₦2,500</option><option value="Monthly Without Coaching">Monthly Without Coaching - ₦12,000</option><option value="Monthly With Coaching">Monthly With Coaching - ₦20,000</option></select>
-    <label>GOAL *</label><textarea id="goal" placeholder="Build strength..." required></textarea>
-
-    <label>PAYMENT METHOD *</label>
-    <div class="pay-options">
-      <label class="pay-card active" id="cardGym"><input type="radio" name="pay" value="later" checked onchange="togglePay()"><span>🏦</span><b>Pay at Gym</b><small>Cash at reception</small></label>
-      <label class="pay-card" id="cardNow"><input type="radio" name="pay" value="now" onchange="togglePay()"><span>💳</span><b>Pay Immediately</b><small>Transfer & upload receipt</small></label>
-    </div>
-
-    <div id="payNowBox" style="display:none" class="card pay-box">
-      <b style="color:#a6ff00">Bank Details for Transfer</b><br>
-      Bank: OPAY<br>Account: 1234567890<br>Name: IRONCITY GYM<br>Amount: <span id="showAmount">Select plan first</span><br><br>
-      <label>UPLOAD RECEIPT *</label>
-      <div class="upload-area" onclick="document.getElementById('receipt').click()">
-        <input type="file" id="receipt" accept="image/*,.pdf" hidden onchange="filePicked(this)">
-        <div id="uploadLabel">📤 UPLOAD RECEIPT<br><small>JPG, PNG, PDF • Max 5MB</small></div>
-      </div>
-      <div id="fileName" style="color:#a6ff00;font-size:12px;margin-top:6px"></div>
-    </div>
-
-    <p id="errorMsg" style="display:none;color:#ff4d4d;font-size:13px">⚠️ Fill all fields oo</p>
-    <button type="submit" class="btn">SUBMIT REGISTRATION</button>
-    <p class="tiny">All fields must be filled to register</p>
-  </form>
-</div>
-
-<div id="alreadyRegistered" class="page" style="display:none; text-align:center; padding:40px 20px;">
-  <div style="max-width:400px; margin:40px auto; background:#111; border:2px solid #a6ff00; border-radius:16px; padding:30px;">
-    <div style="font-size:50px;">⚠️</div>
-    <h2 style="color:#a6ff00; margin:15px 0;">Already Registered</h2>
-    <p style="color:#ccc; font-size:14px; line-height:1.5;">
-      This phone number <b id="dupPhone" style="color:#fff;"></b> is already in our system.
-    </p>
-    <div style="background:#000; padding:15px; border-radius:10px; margin:15px 0; text-align:left; font-size:13px;">
-      <div>Name: <b id="dupName" style="color:#a6ff00;"></b></div>
-      <div>Plan: <span id="dupPlan"></span></div>
-      <div>Expires: <b id="dupExpiry" style="color:orange;"></b></div>
-      <div>Status: <b id="dupStatus"></b></div>
-    </div>
-    <button class="btn btn-green" onclick="showPage('home', document.querySelector('.bottom-nav button:nth-child(1)'))" style="width:100%; padding:12px; border-radius:10px; background:#a6ff00; color:#000; font-weight:900; border:none; cursor:pointer;">Back to Home</button>
-    <p style="color:#666; font-size:11px; margin-top:10px;">If you want to renew, visit gym or contact admin.</p>
+<!-- RECEIPT MODAL - NEW -->
+<div id="receiptModal" onclick="if(event.target===this)closeReceipt()">
+  <div class="inner">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b style="color:#a6ff00">🧾 Payment Receipt</b><button onclick="closeReceipt()" style="background:red;color:#fff;border:none;padding:6px 12px;border-radius:8px;font-weight:900;cursor:pointer">✕ Close</button></div>
+    <div id="receiptContent" style="text-align:center;color:#666">Loading...</div>
   </div>
 </div>
 
-<div id="about" class="page">
-  <h2 class="neon">ABOUT US</h2>
-  <div class="card time-card"><h3>🕒 OPENING HOURS</h3><div class="time-row" style="margin-top:10px"><div><small>Morning</small><br><b>7AM - 11AM</b></div><div><small>Evening</small><br><b>3PM - 8PM</b></div></div></div>
-  <div class="hero-img"><img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600"></div>
-  <div class="card"><h3>OUR STORY</h3><p class="about-text">IRONCITY started 2021 behind Ogige. 2 sessions daily to avoid rush.</p></div>
- <div style="display: flex; justify-content: center;">
-  <a href="https://www.google.com/maps/dir/?api=1&destination=Ogige+Main+Market+Nsukka" 
-   target="_blank"
-   style="background:transparent; border:1.5px solid var(--neon); color:var(--neon); padding:12px 22px; border-radius:10px; font-weight:900; text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-top: 10px;">
-   📍 MAP
-</a>
-</div>
-</div>
+<script>
+const ADMIN_PASSWORD = "IronCity2024";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJu69LzD43DvMcqaYm7U8GvlmRorUkrqhj0IDfsx-X2JXQZSVpsUgf63PJIwf87EK4/exec";
+function checkPassword(){if(document.getElementById('passInput').value===ADMIN_PASSWORD){localStorage.setItem('ironcity_admin','true');showDashboard()}else{document.getElementById('loginError').innerText="Wrong password!"}}function showDashboard(){document.getElementById('loginBox').style.display="none";document.getElementById('dashboard').style.display="block";loadMembers()}function logout(){localStorage.removeItem('ironcity_admin');location.reload()}if(localStorage.getItem('ironcity_admin')==='true'){showDashboard()}
+function filterTable(){
+  const q=document.getElementById('search').value.toLowerCase().trim();
+  const info=document.getElementById('searchInfo');let visibleCount=0,totalRows=0;
+  document.querySelectorAll('table tbody tr').forEach(tr=>{
+    if(tr.innerText.includes('No one')||tr.innerText.includes('No active')||tr.innerText.includes('No expired')||tr.innerText.includes('Loading')){return}
+    totalRows++;const show=q===''||tr.innerText.toLowerCase().includes(q);tr.style.display=show?'':'none';if(show)visibleCount++;
+  });
+  if(q){info.textContent=visibleCount>0?`✅ ${visibleCount} found for "${q}"`:`❌ No results for "${q}"`}else{info.textContent=''}
+}
+function getExpiryFromPlan(plan, from=new Date()){const d=new Date(from);const p=plan.toLowerCase();if(p.includes("daily"))d.setDate(d.getDate()+1);else if(p.includes("weekly")&&!p.includes("2"))d.setDate(d.getDate()+7);else if(p.includes("2 week"))d.setDate(d.getDate()+14);else d.setMonth(d.getMonth()+1);return d.toISOString().split('T')[0]}
+function parseDate(str){if(!str)return null;const s=String(str).trim();if(s.includes('T')||s.match(/^\d{4}-\d{2}-\d{2}/)){const d=new Date(s);if(!isNaN(d)){d.setHours(0,0,0,0);return d}}if(s.includes('/')){const p=s.split('/');if(p.length===3){const d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));if(!isNaN(d)){d.setHours(0,0,0,0);return d}}}const d=new Date(s);if(!isNaN(d)){d.setHours(0,0,0,0);return d}return null}
+let rawDataCache=[];
+function getPriceFromPlan(plan){const p=String(plan||"").toLowerCase().trim();if(p==="daily without coaching")return 1500;if(p==="daily with coaching")return 2500;if(p==="weekly without coaching")return 7000;if(p==="weekly with coaching")return 10000;if(p==="2 weeks without coaching")return 12000;if(p==="2 weeks with coaching")return 16000;if(p==="monthly without coaching")return 12000;if(p==="monthly with coaching")return 20000;return 1500}
+function changeDays(id, delta){const inp=document.getElementById(id);let v=parseInt(inp.value)||0;v+=delta;if(v<1)v=1;if(v>365)v=365;inp.value=v}
+function viewReceipt(url){
+  if(!url){alert('No receipt');return}
+  const modal=document.getElementById('receiptModal');
+  const content=document.getElementById('receiptContent');
+  modal.style.display='flex';
+  // Direct image link from Drive needs preview
+  let displayUrl = url;
+  if(url.includes('drive.google.com') && url.includes('/view')){
+    const id = url.match(/[-\w]{25,}/);
+    if(id) displayUrl = `https://drive.google.com/file/d/${id[0]}/preview`;
+  }
+  if(url.toLowerCase().includes('.pdf') || displayUrl.includes('/preview')){
+    content.innerHTML=`<iframe src="${displayUrl}" style="height:70vh"></iframe><br><a href="${url}" target="_blank" style="color:#a6ff00;margin-top:10px;display:inline-block">Open in new tab</a>`;
+  } else {
+    content.innerHTML=`<img src="${displayUrl}" style="max-width:100%" onerror="this.outerHTML='<a href=\\'${url}\\' target=_blank style=color:#a6ff00>Open Receipt - ${url}</a>'"><br><a href="${url}" target="_blank" style="color:#a6ff00;margin-top:10px;display:inline-block">Open in new tab</a>`;
+  }
+}
+function closeReceipt(){document.getElementById('receiptModal').style.display='none';}
+function generateAndSendCard(name,phone,plan,expiry,profilePic,membershipId){
+  const clean=String(phone).replace(/[^0-9]/g,'');const wa=clean.startsWith('0')?'234'+clean.slice(1):clean;
+  const id=membershipId||('IC-'+clean.slice(-4));
+  const qr=`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=IRONCITY|${name}|${phone}|${plan}|${expiry}`;
+  const text=`*IRONCITY GYM - YOUR CARD APPROVED* 💳\n\nName: ${name}\nPhone: ${phone}\nID: ${id}\nPlan: ${plan}\nExpires: ${expiry}\n\nProfile: ${profilePic||'Uploaded'}\nQR: ${qr}\n\nShow this at gym gate.\nBehind Ogige Main Market, Nsukka\nOpen: 7AM-11AM & 3PM-8PM\n\nIRONCITY - We keep you fit!`;
+  window.open(`https://wa.me/${wa}?text=${encodeURIComponent(text)}`,'_blank');
+}
+async function addDaysToMember(phone, inputId, btn){
+  const days=parseInt(document.getElementById(inputId).value)||0;
+  if(days<1){alert('Enter days');return}
+  if(!confirm(`Add ${days} days to ${phone}?`))return;
+  if(btn){btn.innerText='...';btn.disabled=true}
+  try{await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify({action:"addDays",phone:String(phone),days:days})});alert(`✅ Added ${days} days`);setTimeout(loadMembers,3500)}catch(e){alert('Error:'+e.message);if(btn){btn.innerText='Add';btn.disabled=false}}
+}
+async function pauseMember(phone, btn){
+  if(!confirm('Pause this member? Clock will stop.'))return;
+  if(btn){btn.innerText='...';btn.disabled=true}
+  try{await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify({action:"pause",phone:String(phone)})});alert('⏸️ Paused');setTimeout(loadMembers,3500)}catch(e){alert(e.message)}
+}
+async function playMember(phone, btn){
+  if(!confirm('Play/Resume? Expiry will shift.'))return;
+  if(btn){btn.innerText='...';btn.disabled=true}
+  try{await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify({action:"play",phone:String(phone)})});alert('▶️ Resumed');setTimeout(loadMembers,3500)}catch(e){alert(e.message)}
+}
+async function markAsPaid(phone, plan, btn){
+  if(btn){btn.innerText="Checking...";btn.disabled=true}
+  const price=getPriceFromPlan(plan);const target=String(phone).replace(/[^0-9]/g,'').slice(-10);
+  const today=new Date();today.setHours(0,0,0,0);
+  const hasActivePaid=rawDataCache.some(m=>{const p=String(m.phone||'').replace(/[^0-9]/g,'').slice(-10);const amt=parseInt(m.amount||m.price||0)||0;const exp=parseDate(m.expiryDate||m.expiry);return p===target&&amt>0&&exp&&exp>=today});
+  if(hasActivePaid){alert("⚠️ Already has ACTIVE paid registration!");if(btn){btn.innerText="Mark Paid";btn.disabled=false}return}
+  if(!confirm('Mark as PAID ₦'+price.toLocaleString()+' for '+plan+'?\n\nThis will automatically send card email to user.')){if(btn){btn.innerText="Mark Paid";btn.disabled=false}return}
+  try{await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify({action:"markPaid",phone:String(phone),price:Number(price)})});alert('✅ Marked as Paid ₦'+price.toLocaleString()+'\n\nEmail with card is being sent automatically now!');setTimeout(loadMembers,4000)}catch(e){alert('Error: '+e.message);if(btn){btn.innerText="Mark Paid";btn.disabled=false}}
+}
+async function cancelMember(phone, btn){if(!confirm('Delete?'))return;if(btn){btn.innerText="Deleting...";btn.disabled=true}await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify({action:"cancel",phone:phone})});alert('✅ Deleted - wait 4 seconds');setTimeout(loadMembers,4000)}
+async function addMemberManually(){const name=document.getElementById('addName').value.trim();const phone=document.getElementById('addPhone').value.trim();const plan=document.getElementById('addPlan').value;const session=document.getElementById('addSession').value;const payMethod=document.getElementById('addPay').value;const msg=document.getElementById('addMsg');if(!name||!phone||!plan||!session){msg.innerHTML='<span style="color:red">Fill all fields</span>';return}msg.innerHTML='Adding...';const isPaid=payMethod.includes('Immediately');const price=isPaid?getPriceFromPlan(plan):0;const expiry=getExpiryFromPlan(plan);const data={name,phone,email:`${phone}@ironcity.com`,session,plan,goal:"general",payMethod,price,amount:price,expiry};try{await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(data)});msg.innerHTML='<span style="color:#a6ff00">✅ Added! Refreshing...</span>';setTimeout(()=>{document.getElementById('addBox').style.display='none';loadMembers();document.getElementById('addName').value='';document.getElementById('addPhone').value='';msg.innerHTML=''},1200)}catch(e){msg.innerHTML='<span style="color:red">Error: '+e.message+'</span>'}}
+async function loadMembers(){
+  document.getElementById('todayDate').innerText=new Date().toDateString().slice(4);
+  try{
+    const res=await fetch(SCRIPT_URL+"?t="+Date.now(),{cache:"no-store"});const data=await res.json();rawDataCache=data;
+    let total=0,active=0,expired=0,soon=0,revenue=0;let todayHTML="",activeHTML="",expiredHTML="";
+    const today=new Date();today.setHours(0,0,0,0);
+    data.reverse().forEach((m, idx)=>{
+      if(!m.name)return;total++;
+      const amt=parseInt(m.amount||m.price||0)||0;if(amt>0){revenue+=amt}
+      const isPaid=amt>0;
+      const expiry=parseDate(m.expiryDate||m.expiry);if(!expiry)return;expiry.setHours(0,0,0,0);
+      const diff=Math.ceil((expiry-today)/(1000*60*60*24));
+      const cleanPhone=String(m.phone||'').replace(/[^0-9]/g,'');const waPhone=cleanPhone.startsWith('0')?'234'+cleanPhone.slice(1):cleanPhone;const waLink=`https://wa.me/${waPhone}`;
+      const isPaused=String(m.status||'').toLowerCase()==='paused';
+      const inputId=`days_${idx}`;
+      const daysControl=`<div class="days-control"><button onclick="changeDays('${inputId}',-1)">▼</button><input id="${inputId}" type="number" value="7" min="1" max="365"><button onclick="changeDays('${inputId}',1)">▲</button><button class="btn-green" style="width:auto;padding:6px 10px;border-radius:8px" onclick="addDaysToMember('${m.phone}','${inputId}',this)">Add</button></div>`;
+      const pausePlayBtn=isPaused?`<button class="icon-btn" title="Play/Resume - shift expiry" onclick="playMember('${m.phone}',this)">▶️</button>`:`<button class="icon-btn" title="Pause - stop counting" onclick="pauseMember('${m.phone}',this)">⏸️</button>`;
+      
+      // NEW: Receipt + Card Buttons
+      const receiptBtn = m.receipt ? `<button style="background:#fff;color:#000;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:800;border:none;cursor:pointer" onclick="viewReceipt('${m.receipt}')">🧾 Receipt</button>` : `<span style="font-size:10px;color:#666">No receipt</span>`;
+      const expStr = (m.expiryDate||m.expiry||'').toString().split('T')[0];
+      const cardBtn = `<button ${!isPaid?'disabled':''} title="${!isPaid?'Mark Paid first':''}" style="background:${!isPaid?'#333':'#a6ff00'};color:${!isPaid?'#666':'#000'};padding:5px 10px;border-radius:8px;font-size:11px;font-weight:800;border:none;cursor:${!isPaid?'not-allowed':'pointer'}" onclick="generateAndSendCard('${String(m.name).replace(/'/g,"\\'")}','${m.phone}','${String(m.plan).replace(/'/g,"\\'")}','${expStr}','${m.profilePic||''}','${m.membershipId||''}')">💳 ${isPaid?'Send Card WA':'Card Locked'}</button>`;
 
-<div id="contact" class="page">
-  <h2 class="neon">CONTACT US</h2>
-  <div class="card time-card"><h3>📍 Visit Us</h3><p>Behind Ogige Main Market, Nsukka</p><div class="time-row" style="margin-top:10px"><div>🌅 <b>7AM-11AM</b></div><div>🌇 <b>3PM-8PM</b></div></div></div>
-  <a href="tel:08123456789" class="btn outline">📞 CALL</a>
-  <a href="https://wa.me/2348123456789" class="btn outline">💬 WHATSAPP</a>
-  
-  <div style="display: flex; justify-content: center;">
-  <a href="https://www.google.com/maps/dir/?api=1&destination=Ogige+Main+Market+Nsukka" 
-   target="_blank"
-   style="background:transparent; border:1.5px solid var(--neon); color:var(--neon); padding:12px 22px; border-radius:10px; font-weight:900; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
-   📍 MAP
-</a>
-</div>
-
-</div>
-
-<div class="bottom-nav">
-  <button class="active" onclick="showPage('home',this)">🏠<span>Home</span></button>
-  <button onclick="showPage('plans',this)">💰<span>Plans</span></button>
-  <button onclick="showPage('register',this)">📝<span>Register</span></button>
-  <button onclick="showPage('about',this)">👥<span>About</span></button>
-  <button onclick="showPage('contact',this)">📍<span>Contact</span></button>
-</div>
-<script src="script.js"></script>
+      let cancelBtn="";let markPaidBtn="";
+      if(!isPaid){cancelBtn=`<button class="btn-cancel" onclick="cancelMember('${m.phone}',this)">Cancel</button>`;markPaidBtn=`<button class="btn-paid" onclick="markAsPaid('${m.phone}','${m.plan}',this)">Mark Paid</button>`}else{markPaidBtn=`<span style="color:#a6ff00;font-weight:700;white-space:nowrap">Paid ₦${amt.toLocaleString()}</span>`}
+      const actionCell=`<div style="display:flex;flex-direction:column;gap:6px">${daysControl}<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${receiptBtn}${markPaidBtn}${cardBtn}${cancelBtn}${pausePlayBtn}<a href="${waLink}" target="_blank" class="btn-wa">WA</a></div></div>`;
+      if(diff<0&&!isPaused){
+        expired++;expiredHTML+=`<tr><td>${m.name}<br><small style="color:#666">${m.phone}</small></td><td>${m.phone}</td><td>${m.plan}</td><td>${expiry.toDateString().slice(4)}</td><td style="color:red;font-weight:800">Expired</td><td>${actionCell}</td></tr>`;
+      }else{
+        active++;const statusBadge=isPaused?`<span style="color:#a6ff00">⏸️ Paused</span>`:diff===0?`<span style="color:#ffaa00;font-weight:700">Today</span>`:`<span style="color:#a6ff00">● Active</span>`;
+        activeHTML+=`<tr><td>${m.name}<br><small style="color:#666">${m.phone}</small></td><td>${m.phone}</td><td>${m.plan}</td><td>${expiry.toDateString().slice(4)} <small style="color:#666">(${diff}d)</small></td><td>${statusBadge}</td><td>${actionCell}</td></tr>`;
+        if(diff===0&&!isPaused){soon++;todayHTML+=`<tr><td>${m.name}</td><td>${m.phone}</td><td>${m.plan}</td><td>${actionCell}</td></tr>`}
+      }
+    });
+    document.getElementById('todayTable').querySelector('tbody').innerHTML=todayHTML||`<tr><td colspan="4" style="color:#666">No one expires today</td></tr>`;
+    document.getElementById('activeTable').querySelector('tbody').innerHTML=activeHTML||`<tr><td colspan="6" style="color:#666">No active members</td></tr>`;
+    document.getElementById('expiredTable').querySelector('tbody').innerHTML=expiredHTML||`<tr><td colspan="6" style="color:#666">No expired members</td></tr>`;
+    document.getElementById('total').innerText=total;document.getElementById('active').innerText=active;document.getElementById('expired').innerText=expired;document.getElementById('soon').innerText=soon;
+    document.getElementById('activeCount').innerText=active;document.getElementById('expiredCount').innerText=expired;document.getElementById('todayCount').innerText=soon;
+    document.getElementById('revenue').innerText="₦"+revenue.toLocaleString();
+    if(document.getElementById('search').value)filterTable();
+  }catch(e){document.querySelectorAll('tbody').forEach(tb=>tb.innerHTML=`<tr><td colspan="6">Error: ${e.message}</td></tr>`)}
+}
+</script>
 </body>
 </html>
