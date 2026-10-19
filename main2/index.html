@@ -8,20 +8,56 @@
 <header><div class="logo">IRONCITY</div><div id="openStatus" class="open-badge">● CHECKING...</div></header>
 
 <div id="home" class="page active">
-  <div class="hero">
-    <p class="small-neon">NSUKKA'S HARDEST GYM</p><h1>BUILD YOUR <span>STRENGTH</span></h1>
-    <div class="card time-card"><div class="time-row"><div>🌅 Morning<br><b>7AM - 11AM</b></div><div>🌇 Evening<br><b>3PM - 8PM</b></div></div><div class="time-note">Monday - Saturday • Closed Sunday & 11AM-3PM</div></div>
-    <div class="hero-img"><img src="images/hero.png"></div>
-    <p class="muted">No fake weights. Real coaches. Behind Ogige Main Market.</p>
-    <button class="btn" onclick="showPage('register', document.querySelector(`.bottom-nav button[onclick*='register']`))">Join Now</button>
-  
-  <div style="display: flex; justify-content: center;">
-  <a href="https://www.google.com/maps/dir/?api=1&destination=Ogige+Main+Market+Nsukka" 
-   target="_blank"
-   style="background:transparent; border:1.5px solid var(--neon); color:var(--neon); padding:12px 22px; border-radius:10px; font-weight:900; text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-top: 10px;">
-   📍 MAP
-</a>
-</div>
+
+  <div class="hero-old">
+    <img src="images/hero.png">
+    <div class="hero-overlay">
+      <div class="top-bar">
+        <p class="small-neon" style="color:#a6ff00;font-weight:900;font-size:11px;margin:0">NSUKKA'S HARDEST GYM</p>
+        <button class="btn-join-small" onclick="showPage('register', document.querySelector(`.bottom-nav button[onclick*='register']`))">Join Now</button>
+      </div>
+      <div>
+        <h1 style="font-size:30px;line-height:0.95;margin:0">BUILD YOUR <span style="color:#a6ff00">STRENGTH</span></h1>
+        <div class="card time-card" style="margin:10px 0 0 0;background:rgba(17,17,17,0.9);backdrop-filter:blur(4px)"><div class="time-row"><div>🌅 Morning<br><b>7AM - 11AM</b></div><div>🌇 Evening<br><b>3PM - 8PM</b></div></div><div class="time-note">Monday - Saturday • Closed Sunday & 11AM-3PM</div></div>
+        <p class="muted" style="font-size:11px;margin-top:8px;color:#aaa">No fake weights. Real coaches. Behind Ogige Main Market.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>💪 WHAT WE OFFER</h2>
+    <div class="offer-grid">
+      <div class="offer-card"><b>🏋️ Personal Coaching</b><p>One-on-one with real coaches</p></div>
+      <div class="offer-card"><b>🔥 Fat Burn</b><p>Weight loss that actually works</p></div>
+      <div class="offer-card"><b>💥 Strength</b><p>Heavy iron, no fake plates</p></div>
+      <div class="offer-card"><b>🥗 Diet Plan</b><p>Simple Nsukka meal guide</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>👕 CUSTOM WEARS - IRONCITY</h2>
+    <div class="shop-grid">
+      <div class="shop-card"><img src="images/polo.png"><div class="info"><b>Polo T-Shirt</b><p>Regular fit with IRONCITY at back</p><span class="badge">✓ Available at Gym</span></div></div>
+      <div class="shop-card"><img src="images/singlet.png"><div class="info"><b>Singlet - Handless</b><p>Sleeveless tank for heavy days</p><span class="badge">✓ Available at Gym</span></div></div>
+      <div class="shop-card"><img src="images/hoodie.png"><div class="info"><b>Hoodie</b><p>Warm, thick, IRONCITY neon logo</p><span class="badge">✓ Available at Gym</span></div></div>
+      <div class="shop-card-more" style="background:#0e0e0e;  border-radius: 14px !important; font-size: 15px !important;
+  color: #777 !important; display:flex;align-items:center;justify-content:center"><div class="info" style="text-align:center"><b style="color:#a6ff00">+ More Designs</b><p>Different colors & sizes</p><span class="badge">Visit Gym to Check</span></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🎒 GEARS & ACCESSORIES</h2>
+    <div class="shop-grid">
+      <div class="shop-card"><img src="images/gloves.png"><div class="info"><b>Lifting Gloves</b><p>Protect palm, grip better</p><span class="badge">✓ Available</span></div></div>
+      <div class="shop-card"><img src="images/belt.png"><div class="info"><b>Lifting Belt</b><p>Back support for heavy lifts</p><span class="badge">✓ Available</span></div></div>
+      <div class="shop-card"><img src="images/shakers.png"><div class="info"><b>Shaker Bottle</b><p>700ml protein shaker</p><span class="badge">✓ Available</span></div></div>
+      <div class="shop-card"><img src="images/band.png" style="opacity:0.5"><div class="info"><b>Wrist Wraps</b><p>More gears coming</p><span class="badge">Coming Soon</span></div></div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;margin:25px 0">
+    <button class="btn" onclick="showPage('register', document.querySelector(`.bottom-nav button[onclick*='register']`))" style="width:100%;padding:15px;font-size:15px;border-radius:12px">Join IronCity Now →</button>
+    <a href="https://www.google.com/maps/dir/?api=1&destination=Ogige+Main+Market+Nsukka" target="_blank" style="background:transparent;border:1.5px solid #333;color:#ccc;padding:12px;border-radius:10px;font-weight:700;text-decoration:none;text-align:center;font-size:12px">📍 Behind Ogige Main Market - Get Directions</a>
   </div>
 </div>
 
@@ -99,16 +135,86 @@
 
 <div id="about" class="page">
   <h2 class="neon">ABOUT US</h2>
-  <div class="card time-card"><h3>🕒 OPENING HOURS</h3><div class="time-row" style="margin-top:10px"><div><small>Morning</small><br><b>7AM - 11AM</b></div><div><small>Evening</small><br><b>3PM - 8PM</b></div></div></div>
-  <div class="hero-img"><img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600"></div>
-  <div class="card"><h3>OUR STORY</h3><p class="about-text">IRONCITY started 2021 behind Ogige. 2 sessions daily to avoid rush.</p></div>
- <div style="display: flex; justify-content: center;">
-  <a href="https://www.google.com/maps/dir/?api=1&destination=Ogige+Main+Market+Nsukka" 
-   target="_blank"
-   style="background:transparent; border:1.5px solid var(--neon); color:var(--neon); padding:12px 22px; border-radius:10px; font-weight:900; text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-top: 10px;">
-   📍 MAP
-</a>
-</div>
+
+  <!-- HERO -->
+  <div class="about-hero-full">
+    <img src="images/hero_member.png">
+    <div class="about-hero-overlay">
+      <span class="eyebrow">NSUKKA'S HARDEST GYM</span>
+      <h1>WE NO BE <span>REGULAR GYM</span></h1>
+      <p>Behind Ogige Main Market, we built IronCity with one rule: No fake weights, real results.</p>
+    </div>
+  </div>
+
+  <!-- STORY + HOURS -->
+  <div class="card time-card">
+    <h3>🕒 OPENING HOURS</h3>
+    <div class="time-row" style="margin-top:10px">
+      <div><small>Morning</small><br><b>7AM - 11AM</b></div>
+      <div><small>Evening</small><br><b>3PM - 8PM</b></div>
+    </div>
+    <div class="time-note">Monday - Saturday • Closed Sunday & 11AM-3PM break</div>
+  </div>
+
+  <div class="card story-card" style="margin-top: 50px; margin-bottom: 50px;">
+    <div class="label">01 / OUR STORY</div>
+    <h3>WHY WE STARTED FOR NSUKKA</h3>
+    <p class="about-text">IRONCITY started 2021 behind Ogige. We see say for Nsukka, many gyms dey use fake plates, coach dey press phone. So we create our own corner - heavy iron, real coaches wey dey watch your form, community wey dey push you. From student to businessman, everybody dey train together.</p>
+    <div class="about-mini-gallery">
+      <img src="images/members2.png">
+      <img src="images/members.png">
+    </div>
+  </div>
+
+  <div class="hero-img"><img src="images/group.png"></div>
+
+  <!-- STATS - people fit scroll -->
+  <div class="stats-grid">
+    <div class="stat-box"><b>300+</b><span>Active Members</span></div>
+    <div class="stat-box"><b>4</b><span>Years Running</span></div>
+    <div class="stat-box"><b>3</b><span>Real Coaches</span></div>
+    <div class="stat-box"><b>100%</b><span>Real Plates Only</span></div>
+  </div>
+
+  <!-- WHAT MAKES US DIFFERENT -->
+  <div class="card dark">
+    <div class="label green">02 / WHY PEOPLE TRUST US</div>
+    <h3>WHAT MAKES IRONCITY DIFFERENT</h3>
+    <div class="diff-grid">
+      <div class="diff"><b>🏋️ No Fake Weights</b><p>All KG na real KG. Wetin you lift na wetin you lift.</p></div>
+      <div class="diff"><b>👊 Real Coaching</b><p>Coach dey correct form, not press phone.</p></div>
+      <div class="diff"><b>⏰ Built for Hustlers</b><p>Morning & Evening sessions, work fit enter.</p></div>
+      <div class="diff"><b>👕 Community</b><p>Wear IRONCITY for Nsukka, people sabi you.</p></div>
+    </div>
+  </div>
+
+  <!-- COACHING SECTION -->
+  <div class="card">
+    <div class="label">03 / COACHING</div>
+    <h3>COACHES WEY DEY FOR YOU</h3>
+    <p class="about-text">No be YouTube coaching. One-on-one guidance, fat burn plan, strength plan, diet guide wey follow Nsukka food - not imported diet wey you no fit afford.</p>
+    <div class="about-mini-gallery three">
+      <img src="images/coach1.png"><img src="images/coach2.png"><img src="images/coach3.png">
+    </div>
+    <div class="coach-tags"><span>Personal Coaching</span><span>Fat Loss</span><span>Strength</span><span>Diet Plan</span></div>
+  </div>
+
+  <!-- CORE VALUES & MISSION -->
+  <div class="card dark">
+    <div class="label green">04 / CORE VALUES & MISSION</div>
+    <h3>MAKE NSUKKA THE HARDEST CITY</h3>
+    <p class="about-text light">Our mission no be to be biggest gym for Nigeria. Na to make every person wey enter IronCity comot stronger, disciplined - body and mindset. Discipline. Real Work. No Excuse.</p>
+    <div class="values">
+      <div><b>01</b> Discipline</div>
+      <div><b>02</b> Real Work</div>
+      <div><b>03</b> Brotherhood</div>
+    </div>
+    <button class="btn-join-about" onclick="showPage('register', document.querySelector(`.bottom-nav button[onclick*='register']`))">Join IronCity Now →</button>
+  </div>
+
+  <div style="display: flex; justify-content: center;">
+    <a href="https://www.google.com/maps/dir/?api=1&destination=Ogige+Main+Market+Nsukka" target="_blank" class="map-btn">📍 BEHIND OGIGE MAIN MARKET - MAP</a>
+  </div>
 </div>
 
 <div id="contact" class="page">
