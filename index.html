@@ -135,16 +135,86 @@
 
 <div id="about" class="page">
   <h2 class="neon">ABOUT US</h2>
-  <div class="card time-card"><h3>🕒 OPENING HOURS</h3><div class="time-row" style="margin-top:10px"><div><small>Morning</small><br><b>7AM - 11AM</b></div><div><small>Evening</small><br><b>3PM - 8PM</b></div></div></div>
-  <div class="hero-img"><img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600"></div>
-  <div class="card"><h3>OUR STORY</h3><p class="about-text">IRONCITY started 2021 behind Ogige. 2 sessions daily to avoid rush.</p></div>
- <div style="display: flex; justify-content: center;">
-  <a href="https://www.google.com/maps/dir/?api=1&destination=Ogige+Main+Market+Nsukka" 
-   target="_blank"
-   style="background:transparent; border:1.5px solid var(--neon); color:var(--neon); padding:12px 22px; border-radius:10px; font-weight:900; text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-top: 10px;">
-   📍 MAP
-</a>
-</div>
+
+  <!-- HERO -->
+  <div class="about-hero-full">
+    <img src="images/hero_member.png">
+    <div class="about-hero-overlay">
+      <span class="eyebrow">NSUKKA'S HARDEST GYM</span>
+      <h1>WE NO BE <span>REGULAR GYM</span></h1>
+      <p>Behind Ogige Main Market, we built IronCity with one rule: No fake weights, real results.</p>
+    </div>
+  </div>
+
+  <!-- STORY + HOURS -->
+  <div class="card time-card">
+    <h3>🕒 OPENING HOURS</h3>
+    <div class="time-row" style="margin-top:10px">
+      <div><small>Morning</small><br><b>7AM - 11AM</b></div>
+      <div><small>Evening</small><br><b>3PM - 8PM</b></div>
+    </div>
+    <div class="time-note">Monday - Saturday • Closed Sunday & 11AM-3PM break</div>
+  </div>
+
+  <div class="card story-card">
+    <div class="label">01 / OUR STORY</div>
+    <h3>WHY WE STARTED FOR NSUKKA</h3>
+    <p class="about-text">IRONCITY started 2021 behind Ogige. We see say for Nsukka, many gyms dey use fake plates, coach dey press phone. So we create our own corner - heavy iron, real coaches wey dey watch your form, community wey dey push you. From student to businessman, everybody dey train together.</p>
+    <div class="about-mini-gallery">
+      <img src="images/members2.png">
+      <img src="images/members.png">
+    </div>
+  </div>
+
+  <div class="hero-img"><img src="images/group.png"></div>
+
+  <!-- STATS - people fit scroll -->
+  <div class="stats-grid">
+    <div class="stat-box"><b>300+</b><span>Active Members</span></div>
+    <div class="stat-box"><b>4</b><span>Years Running</span></div>
+    <div class="stat-box"><b>3</b><span>Real Coaches</span></div>
+    <div class="stat-box"><b>100%</b><span>Real Plates Only</span></div>
+  </div>
+
+  <!-- WHAT MAKES US DIFFERENT -->
+  <div class="card dark">
+    <div class="label green">02 / WHY PEOPLE TRUST US</div>
+    <h3>WHAT MAKES IRONCITY DIFFERENT</h3>
+    <div class="diff-grid">
+      <div class="diff"><b>🏋️ No Fake Weights</b><p>All KG na real KG. Wetin you lift na wetin you lift.</p></div>
+      <div class="diff"><b>👊 Real Coaching</b><p>Coach dey correct form, not press phone.</p></div>
+      <div class="diff"><b>⏰ Built for Hustlers</b><p>Morning & Evening sessions, work fit enter.</p></div>
+      <div class="diff"><b>👕 Community</b><p>Wear IRONCITY for Nsukka, people sabi you.</p></div>
+    </div>
+  </div>
+
+  <!-- COACHING SECTION -->
+  <div class="card">
+    <div class="label">03 / COACHING</div>
+    <h3>COACHES WEY DEY FOR YOU</h3>
+    <p class="about-text">No be YouTube coaching. One-on-one guidance, fat burn plan, strength plan, diet guide wey follow Nsukka food - not imported diet wey you no fit afford.</p>
+    <div class="about-mini-gallery three">
+      <img src="images/coach1.png"><img src="images/coach2.png"><img src="images/coach3.png">
+    </div>
+    <div class="coach-tags"><span>Personal Coaching</span><span>Fat Loss</span><span>Strength</span><span>Diet Plan</span></div>
+  </div>
+
+  <!-- CORE VALUES & MISSION -->
+  <div class="card dark">
+    <div class="label green">04 / CORE VALUES & MISSION</div>
+    <h3>MAKE NSUKKA THE HARDEST CITY</h3>
+    <p class="about-text light">Our mission no be to be biggest gym for Nigeria. Na to make every person wey enter IronCity comot stronger, disciplined - body and mindset. Discipline. Real Work. No Excuse.</p>
+    <div class="values">
+      <div><b>01</b> Discipline</div>
+      <div><b>02</b> Real Work</div>
+      <div><b>03</b> Brotherhood</div>
+    </div>
+    <button class="btn-join-about" onclick="showPage('register', document.querySelector(`.bottom-nav button[onclick*='register']`))">Join IronCity Now →</button>
+  </div>
+
+  <div style="display: flex; justify-content: center;">
+    <a href="https://www.google.com/maps/dir/?api=1&destination=Ogige+Main+Market+Nsukka" target="_blank" class="map-btn">📍 BEHIND OGIGE MAIN MARKET - MAP</a>
+  </div>
 </div>
 
 <div id="contact" class="page">
