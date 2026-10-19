@@ -43,6 +43,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--neon)} label{font-siz
 .icon-btn{width:36px;height:36px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;font-size:16px}
 
    /* ===== IRONCITY HOME FIX - KEEP YOUR HTML, JUST ADD THIS CSS ===== */
+/* ===== IRONCITY HOME FIX - KEEP YOUR HTML, JUST ADD THIS CSS ===== */
 
 /* Make bottom nav stay static like Plans page */
 .bottom-nav{
@@ -105,8 +106,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--neon)} label{font-siz
 
 /* Sections */
 #home .section{
-  margin: 22px 0 !important;
-  padding: 0 2px !important;
+  margin: 40px 0 !important;
+  padding: 8px 2px 0 2px !important;
 }
 #home .section h2{
   color: #a6ff00 !important;
