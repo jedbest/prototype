@@ -147,7 +147,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--neon)} label{font-siz
 }
 
 /* THIS FIXES YOUR CUTTING ISSUE - Full picture visible but card size stays same */
-#home .shop-card img{
+/*#home .shop-card img{
   width: 100% !important;
   height: 140px !important;
   min-height: 140px !important;
@@ -158,7 +158,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--neon)} label{font-siz
   padding: 8px !important;
   display: block !important;
   flex-shrink: 0 !important;
-}
+}*/
 
 #home .shop-card .info{
   padding: 11px !important;
@@ -318,4 +318,84 @@ input:focus,select:focus,textarea:focus{border-color:var(--neon)} label{font-siz
 .card.story-card {
   width: 100% !important;
   max-width: 100% !important;
+}
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.shop-card {
+  background: #0e0e0e;
+  border-radius: 14px !important;
+  overflow: hidden; /* cut anything wey comot */
+  border: 1px solid #1a1a1a;
+}
+
+.shop-card img {
+  width: 100% !important; /* FILL left and right - this na the main fix */
+  height: 170px !important; /* same height for all 4 */
+  object-fit: cover !important; /* product fill without stretching */
+  object-position: center !important;
+  display: block;
+  background: #fff; /* so the blur gym white go blend */
+}
+
+.shop-card .info {
+  padding: 10px 10px 12px 10px;
+  background: #0e0e0e; /* small black place for text remain */
+}
+
+.shop-card .info b {
+  font-size: 13px;
+  color: #fff;
+}
+
+.shop-card .info p {
+  font-size: 11px;
+  color: #777;
+  margin: 3px 0 6px 0;
+}
+
+/* ===== ABOUT PAGE SPACING FIX - FROM VIDEO REQUEST - DO NOT REMOVE ===== */
+
+/* 1. OPENING HOURS - leave as is but add bottom space */
+#about .card.time-card {
+  margin-bottom: 50px !important;
+}
+
+/* 2. WHY WE STARTED FOR NSUKKA - space top & bottom */
+#about .card.story-card {
+  margin-top: 50px !important;
+  margin-bottom: 60px !important;
+}
+
+/* 3. GROUP PICTURE - that big group.png - space before am */
+#about .hero-img {
+  margin-top: 60px !important;
+  margin-bottom: 25px !important;
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* 4. STATS - 300+ / 4 / 3 / 100% - leave as is, small bottom space */
+#about .stats-grid {
+  margin-top: 10px !important;
+  margin-bottom: 30px !important;
+}
+
+/* 5. WHY PEOPLE TRUST US - more space on top */
+#about .card.dark {
+  margin-top: 50px !important;
+}
+
+/* 6. COACHES WEY DEY FOR YOU - more space on top */
+#about .card:has(.coach-tags) {
+  margin-top: 50px !important;
+}
+
+/* 7. CORE VALUES - more space on top */
+#about .card:has(.values) {
+  margin-top: 50px !important;
 }
