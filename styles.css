@@ -291,6 +291,16 @@ input:focus,select:focus,textarea:focus{border-color:var(--neon)} label{font-siz
   }
 }
 
+/* PHONE FIX - prevent face cut */
+@media (max-width: 768px) {
+  .about-mini-gallery.three img {
+    height: 380px !important;
+    object-position: top center !important;
+  }
+  .about-mini-gallery img {
+    height: 280px !important;
+  }
+}
 /* Mini galleries - force fill, no middle black */
 .about-mini-gallery{
   display:grid !important;
