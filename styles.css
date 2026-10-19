@@ -250,132 +250,72 @@ input:focus,select:focus,textarea:focus{border-color:var(--neon)} label{font-siz
 /* Buttons */
 .btn-join-about{width:100%; margin-top:16px; padding:14px; border-radius:12px; background:#a6ff00; color:#000; font-weight:900; border:none; font-size:14px}
 .map-btn{background:#a6ff00 !important; border:none !important; color:#000 !important; padding:14px 28px !important; border-radius:12px !important; font-weight:900 !important; font-size:13px !important; text-decoration:none !important; display:inline-flex !important; align-items:center !important; gap:6px !important; margin-top:10px !important; box-shadow:0 4px 15px rgba(166,255,0,0.2) !important}
-/* === IRONCITY ABOUT PAGE - FINAL FIX === */
-
-/* Force hero to fill */
-#about .about-hero-full{
+/* === ABOUT PAGE - PHONE FIX === */
+.about-hero-full {
   width: 100% !important;
-  height: 450px !important;
-  overflow:hidden !important;
-  position:relative !important;
+  height: auto !important;
+  aspect-ratio: 16/11 !important;
+  overflow: hidden !important;
   border-radius: 20px !important;
-  margin-bottom: 20px !important;
 }
-#about .about-hero-full img{
-  width:100% !important;
-  height:100% !important;
-  object-fit:cover !important;
-  object-position: center top !important;
-  display:block !important;
-}
-
-/* Make STORY + TIME side by side on desktop */
-#about .card.time-card, 
-#about .card.story-card {
+.about-hero-full img {
   width: 100% !important;
-}
-
-@media (min-width: 768px) {
-  #about {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-  #about h2.neon,
-  #about .about-hero-full,
-  #about .hero-img,
-  #about .stats-grid,
-  #about .card.dark,
-  #about .card:not(.time-card):not(.story-card) {
-    grid-column: 1 / -1 !important;
-  }
-}
-
-/* PHONE FIX - prevent face cut */
-@media (max-width: 768px) {
-  .about-mini-gallery.three img {
-    height: 380px !important;
-    object-position: top center !important;
-  }
-  .about-mini-gallery img {
-    height: 280px !important;
-  }
-}
-/* Mini galleries - force fill, no middle black */
-.about-mini-gallery{
-  display:grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap:14px !important;
-}
-/* FIX COACH CUTTING */
-.about-mini-gallery.three {
-  grid-template-columns: 1fr 1fr 1fr !important;
-  gap: 14px !important;
-}
-
-.about-mini-gallery.three img {
-  width: 100% !important;
-  height: 340px !important; /* increase from 260px to 340px */
+  height: 100% !important;
   object-fit: cover !important;
-  object-position: top center !important; /* show face, not chest */
-  border-radius: 14px !important;
-  background: #111 !important;
+  object-position: center top !important; /* show face, not chest */
+  display: block !important;
 }
 
-/* Give the card itself more top space */
-.card:has(.about-mini-gallery.three) {
-  padding-top: 24px !important;
-}
-
-/* Optional - make it 2 rows on phone so faces bigger */
-@media (max-width: 600px) {
-  .about-mini-gallery.three {
-    grid-template-columns: 1fr !important;
-  }
-  .about-mini-gallery.three img {
-    height: 420px !important;
-  }
-}
-
-/* FIX MEMBERS GALLERY - make it full width, not middle */
-.story-card .about-mini-gallery {
+.about-mini-gallery {
+    width: 100% !important;
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
-  gap: 14px !important;
-  width: 100% !important;
-  margin-top: 18px !important;
+  gap: 12px !important;
 }
-
-.story-card .about-mini-gallery img {
+.about-mini-gallery img {
   width: 100% !important;
-  height: 260px !important; /* taller so faces show */
+  height: auto !important;
+  aspect-ratio: 1/1 !important; /* square - face no go cut */
   object-fit: cover !important;
   object-position: top center !important;
   border-radius: 12px !important;
 }
 
-/* If your card get max-width wey dey force middle, remove am */
-.story-card {
+.about-mini-gallery.three {
+  grid-template-columns: 1fr 1fr 1fr !important;
+}
+.about-mini-gallery.three img {
+ height: auto !important;
+  object-position: top center !important;
+}
+
+.hero-img {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16/9 !important;
+  overflow: hidden !important;
+}
+.hero-img img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+/* Phone make it smaller height */
+@media (max-width: 600px) {
+  .about-hero-full {
+    aspect-ratio: 4/3 !important;
+  }
+  .about-mini-gallery.three {
+    grid-template-columns: 1fr !important;
+  }
+  .about-mini-gallery.three img {
+    aspect-ratio: 4/3 !important;
+  }
+}
+
+.card.story-card {
   width: 100% !important;
   max-width: 100% !important;
-}
-
-/* Group image */
-.hero-img{
-  width:100% !important;
-  height:350px !important;
-  overflow:hidden !important;
-  border-radius:16px !important;
-}
-.hero-img img{
-  width:100% !important;
-  height:100% !important;
-  object-fit:cover !important;
-}
-
-/* Diff grid */
-.diff-grid{
-  display:grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap:16px !important;
 }
