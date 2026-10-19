@@ -1,4 +1,6 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJu69LzD43DvMcqaYm7U8GvlmRorUkrqhj0IDfsx-X2JXQZSVpsUgf63PJIwf87EK4/exec";
+// script.js//
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXzLASwZrrU3uwd_KIz-hk4TkinqfwGpOUrkL6J2oufiEWx7UQjNJ5FR431eq5QlWcJw/exec";
 const cleanPhone = (p) => String(p).replace(/[^0-9]/g,'').slice(-10);
 
 function updateOpenStatus(){
@@ -54,20 +56,30 @@ function updateAmount(){
   const m={
     'Daily Without Coaching':'₦1,500',
     'Daily With Coaching':'₦2,500',
+    'Weekly Without Coaching':'₦7,000',
+    'Weekly With Coaching':'₦10,000',
+    '2 Weeks Without Coaching':'₦12,000',
+    '2 Weeks With Coaching':'₦16,000',
     'Monthly Without Coaching':'₦12,000',
     'Monthly With Coaching':'₦20,000'
   };
   const el=document.getElementById('showAmount');if(el)el.textContent=m[v]||'Select plan';
 }
 
-function getExpiry(plan){
-  const d = new Date();
+function getDaysFromPlan(plan){
   const p = plan.toLowerCase();
-  if(p.includes("daily") || p.includes("day")) d.setDate(d.getDate()+1);
-  else if(p.includes("weekly")) d.setDate(d.getDate()+7);
-  else if(p.includes("quarterly")) d.setMonth(d.getMonth()+3);
-  else if(p.includes("yearly")) d.setFullYear(d.getFullYear()+1);
-  else d.setMonth(d.getMonth()+1);
+  if(p.includes("daily")) return 1;
+  if(p.includes("weekly") &&!p.includes("2")) return 7;
+  if(p.includes("2 week") || p.includes("2weeks") || p.includes("two week")) return 14;
+  if(p.includes("monthly") || p.includes("month")) return 30;
+  if(p.includes("quarterly")) return 90;
+  if(p.includes("yearly")) return 365;
+  return 30;
+}
+
+function getExpiry(plan, fromDate = new Date()){
+  const d = new Date(fromDate);
+  d.setDate(d.getDate() + getDaysFromPlan(plan));
   return d.toISOString().split('T')[0];
 }
 
@@ -87,6 +99,22 @@ function parseDateCheck(s){
   const d=new Date(str); return isNaN(d)?null:d;
 }
 
+function profilePicked(input){
+  const el=document.getElementById('profileName');
+  const label=document.getElementById('profileLabel');
+  if(el && input.files[0]){
+    el.textContent = "✅ " + input.files[0].name;
+    if(input.files[0].type.startsWith('image/')){
+      const reader = new FileReader();
+      reader.onload = e => {
+        label.innerHTML = `<img src="${e.target.result}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid #a6ff00"><br>✅ Photo selected`;
+        localStorage.setItem('tempProfilePic', e.target.result);
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+}
+
 async function validateForm(e){
   e.preventDefault();
   const name=document.getElementById('fullName').value.trim();
@@ -95,9 +123,11 @@ async function validateForm(e){
   const plan=document.getElementById('planSelect').value;
   const goal=document.getElementById('goal').value.trim();
   const email = document.getElementById('email')?.value.trim() || "";
+  const profileInput = document.getElementById('profilePic');
+  const profileFile = profileInput? profileInput.files[0] : null;
 
-  const payRadio = document.querySelector('input[name="pay"]:checked') || document.querySelector('input[value="now"]') || document.querySelector('input[type="radio"]:checked');
-  const isNow = payRadio? (payRadio.value.toLowerCase().includes('now') || payRadio.value.toLowerCase().includes('immediate')) : false;
+  const payRadio = document.querySelector('input[name="pay"]:checked');
+  const isNow = payRadio? payRadio.value === 'now' : false;
 
   const payMethod = isNow?'Pay Immediately':'Pay at Gym';
   const receiptInput = document.getElementById('receipt');
@@ -108,6 +138,9 @@ async function validateForm(e){
   if(!name||!phone||!sess||!plan||!goal){
     err.textContent='⚠️ Fill all fields oo - all are required';err.style.display='block';return false;
   }
+  if(!profileFile &&!localStorage.getItem('tempProfilePic')){
+    err.textContent='⚠️ Please upload your face photo for ID card';err.style.display='block';return false;
+  }
   if(isNow &&!receiptFile){
     err.textContent='⚠️ You chose Pay Immediately - please upload receipt';err.style.display='block';return false;
   }
@@ -116,62 +149,73 @@ async function validateForm(e){
   submitBtn.disabled = true;
 
   try{
-    // === 1. FAST CHECK ALREADY REGISTERED ===
+    // === 1. CHECK EXISTING FOR EXTEND LOGIC ===
     const checkRes = await fetch(SCRIPT_URL + "?phone=" + cleanPhone(phone) + "&t=" + Date.now(), { cache: "no-store" });
     const members = await checkRes.json();
     const existing = members[0];
 
-    if(existing){
-      const alreadySec = document.getElementById('alreadyRegistered');
-      if(alreadySec){
-        document.getElementById('dupPhone').innerText = existing.phone;
-        document.getElementById('dupName').innerText = existing.name;
-        document.getElementById('dupPlan').innerText = existing.plan;
-        const exp = existing.expiryDate || existing.expiry || '';
-        document.getElementById('dupExpiry').innerText = exp;
-        const expD = parseDateCheck(exp);
-        const isExp = expD? expD < new Date().setHours(0,0,0,0) : false;
-        document.getElementById('dupStatus').innerText = isExp? "🔴 Expired - Please Renew" : "🟢 Active";
-        document.querySelectorAll('.page, section').forEach(p=> p.style.display='none');
-        alreadySec.style.display='block';
-        document.querySelectorAll('.bottom-nav button').forEach(b=> b.classList.remove('active'));
-        window.scrollTo(0,0);
+    let expiryDate = "";
+    let isTopUp = false;
+
+     if(existing){
+      const exp = existing.expiryDate || existing.expiry || '';
+      const expD = parseDateCheck(exp);
+      const today = new Date(); today.setHours(0,0,0,0);
+
+      if(expD && expD >= today){
+        // ACTIVE - EXTEND, NOT BLOCK
+        isTopUp = true;
+        expiryDate = getExpiry(plan, expD);
+        submitBtn.innerText = "Extending...";
       } else {
-        err.textContent = `⚠️ Phone ${existing.phone} already registered as ${existing.name}. Expires: ${existing.expiryDate||existing.expiry}`;
-        err.style.display='block';
+        // EXPIRED - new expiry from today
+        expiryDate = getExpiry(plan, new Date());
       }
-      submitBtn.innerText = "SUBMIT REGISTRATION";
-      submitBtn.disabled = false;
-      return false;
+    } else {
+      expiryDate = getExpiry(plan, new Date());
     }
 
-    // === 2. IF NOT EXISTING, CONTINUE ===
-    submitBtn.innerText = "Processing...";
+    // === 2. CONTINUE REGISTRATION ===
+    submitBtn.innerText = isTopUp? "Extending plan..." : "Processing...";
     let price = 1500;
+    if(plan === 'Daily Without Coaching') price = 1500;
     if(plan === 'Daily With Coaching') price = 2500;
+    if(plan === 'Weekly Without Coaching') price = 7000;
+    if(plan === 'Weekly With Coaching') price = 10000;
+    if(plan === '2 Weeks Without Coaching') price = 12000;
+    if(plan === '2 Weeks With Coaching') price = 16000;
     if(plan === 'Monthly Without Coaching') price = 12000;
     if(plan === 'Monthly With Coaching') price = 20000;
     if(!isNow){ price = 0; }
 
-    const expiryDate = getExpiry(plan);
     let receiptObj = null;
     if(isNow && receiptFile){
       const base64 = await getBase64(receiptFile);
       receiptObj = { name: receiptFile.name, mime: receiptFile.type, data: base64 };
     }
 
+    let profileObj = null;
+    if(profileFile){
+      const base64P = await getBase64(profileFile);
+      profileObj = { name: profileFile.name, mime: profileFile.type, data: base64P };
+    }
+
     const data = {
       name: name, phone: phone, email: email || `${cleanPhone(phone)}@ironcity.com`,
       session: sess, plan: plan, goal: goal, payMethod: payMethod,
-      price: price, amount: price, expiry: expiryDate, receipt: receiptObj
+      price: price, amount: price, expiry: expiryDate, receipt: receiptObj,
+      profilePic: profileObj,
+      isTopUp: isTopUp
     };
 
     await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(data) });
     localStorage.setItem('payMethod', payMethod);
     localStorage.setItem('plan', plan);
     localStorage.setItem('memberName', name);
+    localStorage.setItem('memberPhone', phone);
     localStorage.setItem('memberExpiry', expiryDate);
-    window.location.href = `thank_you.html?name=${encodeURIComponent(name)}&plan=${encodeURIComponent(plan)}&expiry=${encodeURIComponent(expiryDate)}`;
+    // profile pic already in tempProfilePic for card page
+   window.location.href = `thank_you.html?name=${encodeURIComponent(name)}&plan=${encodeURIComponent(plan)}&expiry=${encodeURIComponent(expiryDate)}&phone=${encodeURIComponent(phone)}&payMethod=${encodeURIComponent(payMethod)}&isTopUp=${isTopUp}`;
 
   } catch(err2){
     console.error(err2);
@@ -182,18 +226,6 @@ async function validateForm(e){
   }
   return false;
 }
-
-document.addEventListener('DOMContentLoaded', ()=>{
-  document.querySelectorAll('input[name="pay"], input[type="radio"]').forEach(r=>{
-    r.addEventListener('change', ()=>{
-      const receiptDiv = document.getElementById('receiptDiv') || document.getElementById('receipt')?.parentElement;
-      if(!receiptDiv) return;
-      const checked = document.querySelector('input[name="pay"]:checked') || r;
-      const show = checked.value.toLowerCase().includes('now') || checked.value.toLowerCase().includes('immediate');
-      receiptDiv.style.display = show? 'block' : 'none';
-    });
-  });
-});
 
 function togglePay(){
   const isNow = document.querySelector('input[name="pay"][value="now"]')?.checked;
