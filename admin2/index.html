@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>IRONCITY ADMIN</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}body{background:#000;color:#fff;padding:10px}h1{color:#a6ff00;text-align:center;margin-top:8px;font-size:21px}h2{margin-top:20px;font-size:16px}#loginBox{max-width:350px;margin:80px auto;background:#111;padding:25px;border-radius:16px;border:2px solid #a6ff00;text-align:center}#dashboard{display:none}.search{width:100%;padding:13px;border-radius:10px;background:#111;border:1px solid #333;color:#fff;margin:10px 0 5px 0;font-size:15px}.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0}.card-stat{background:#111;border:1px solid #333;padding:12px;border-radius:10px;text-align:center;font-size:13px}.card-stat b{color:#a6ff00;font-size:18px;display:block;margin-top:3px}
 /* FIXED - BIGGER LETTERS + PRESSABLE BUTTONS + SCROLLABLE ON PHONE */
@@ -26,13 +27,50 @@ input[type=number]{
 -moz-appearance:textfield;
 appearance:textfield;
 }
+.pass-wrap{
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pass-wrap .search{
+  padding-right: 70px !important; /* space for eye and check */
+}
+
+#togglePass{
+  position: absolute;
+  right: 45px;
+  top: 50%;
+  transform: translateY(-70%);
+  cursor: pointer;
+  color: #888;
+  font-size: 16px;
+  z-index: 2;
+}
+
+#passStatus{
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-70%);
+  font-size: 16px;
+}
 </style>
 </head>
 <body>
 <div id="loginBox">
   <div style="color:#a6ff00;font-weight:900;font-size:20px">🔒 ADMIN LOGIN</div>
   <div style="color:#666;font-size:12px;margin-bottom:15px">IRONCITY GYM ONLY</div>
-  <input type="password" id="passInput" placeholder="Enter Password" class="search" style="margin:0 0 10px 0">
+  
+  <!-- I added wrap so eye go stay inside your input -->
+  <div class="pass-wrap">
+    <input type="password" id="passInput" placeholder="Enter Password" class="search" style="margin:0 0 10px 0">
+    <span id="togglePass"><i class="fa-solid fa-eye"></i></span>
+    <span id="passStatus"></span>
+  </div>
+  
   <button class="btn btn-green" onclick="checkPassword()">UNLOCK</button>
   <div id="loginError" style="color:red;font-size:13px;margin-top:10px"></div>
 </div>
@@ -67,7 +105,49 @@ appearance:textfield;
 <script>
 const ADMIN_PASSWORD = "IronCity2024";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXzLASwZrrU3uwd_KIz-hk4TkinqfwGpOUrkL6J2oufiEWx7UQjNJ5FR431eq5QlWcJw/exec";
-function checkPassword(){if(document.getElementById('passInput').value===ADMIN_PASSWORD){localStorage.setItem('ironcity_admin','true');showDashboard()}else{document.getElementById('loginError').innerText="Wrong password!"}}function showDashboard(){document.getElementById('loginBox').style.display="none";document.getElementById('dashboard').style.display="block";loadMembers()}function logout(){localStorage.removeItem('ironcity_admin');location.reload()}if(localStorage.getItem('ironcity_admin')==='true'){showDashboard()}
+// Your password variable - keep am outside
+
+// --- NEW PART FOR EYE AND CHECK ---
+const passInput = document.getElementById('passInput');
+const togglePass = document.getElementById('togglePass');
+const passStatus = document.getElementById('passStatus');
+
+togglePass.addEventListener("click", () => {
+  if(passInput.type === "password"){
+    passInput.type = "text";
+    togglePass.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+  } else {
+    passInput.type = "password";
+    togglePass.innerHTML = '<i class="fa-solid fa-eye"></i>';
+  }
+});
+
+passInput.addEventListener("input", () => {
+  const loginError = document.getElementById('loginError');
+  if(passInput.value === ""){
+    passStatus.innerHTML = "";
+    passInput.style.borderColor = "";
+    loginError.innerText = "";
+  } else if(passInput.value === ADMIN_PASSWORD){
+    passStatus.innerHTML = "✅";
+    passInput.style.borderColor = "#a6ff00";
+    loginError.innerText = "";
+  } else {
+    passStatus.innerHTML = "❌";
+    passInput.style.borderColor = "red";
+  }
+});
+
+// --- YOUR OLD FUNCTION BUT EDITED TO USE SAME LOGIC ---
+function checkPassword(){
+  if(document.getElementById('passInput').value === ADMIN_PASSWORD){
+    localStorage.setItem('ironcity_admin','true');
+    showDashboard();
+  } else {
+    document.getElementById('loginError').innerText = "Wrong password! ❌";
+  }
+}
+function showDashboard(){document.getElementById('loginBox').style.display="none";document.getElementById('dashboard').style.display="block";loadMembers()}function logout(){localStorage.removeItem('ironcity_admin');location.reload()}if(localStorage.getItem('ironcity_admin')==='true'){showDashboard()}
 function filterTable(){const q=document.getElementById('search').value.toLowerCase().trim();const info=document.getElementById('searchInfo');let visibleCount=0;document.querySelectorAll('table tbody tr').forEach(tr=>{if(tr.innerText.includes('No one')||tr.innerText.includes('No active')||tr.innerText.includes('No expired')||tr.innerText.includes('Loading')){return}const show=q===''||tr.innerText.toLowerCase().includes(q);tr.style.display=show?'':'none';if(show)visibleCount++;});if(q){info.textContent=visibleCount>0?`✅ ${visibleCount} found`:`❌ No results`}else{info.textContent=''}}
 function getExpiryFromPlan(plan, from=new Date()){const d=new Date(from);const p=plan.toLowerCase();if(p.includes("daily"))d.setDate(d.getDate()+1);else if(p.includes("weekly")&&!p.includes("2"))d.setDate(d.getDate()+7);else if(p.includes("2 week"))d.setDate(d.getDate()+14);else d.setMonth(d.getMonth()+1);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,'0')+"-"+String(d.getDate()).padStart(2,'0');}
 function parseDate(str){if(!str)return null;const s=String(str).trim();if(s.includes('T')||s.match(/^\d{4}-\d{2}-\d{2}/)){const d=new Date(s);if(!isNaN(d)){d.setHours(0,0,0,0);return d}}if(s.includes('/')){const p=s.split('/');if(p.length===3){const d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));if(!isNaN(d)){d.setHours(0,0,0,0);return d}}}const d=new Date(s);if(!isNaN(d)){d.setHours(0,0,0,0);return d}return null}

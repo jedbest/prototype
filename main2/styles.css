@@ -399,3 +399,65 @@ input:focus,select:focus,textarea:focus{border-color:var(--neon)} label{font-siz
 #about .card:has(.values) {
   margin-top: 50px !important;
 }
+
+/* RESET so e no scatter */
+*{
+  box-sizing: border-box;
+}
+
+.time-row{
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.socials-section{
+  margin-top: 25px;
+  width: 100%;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.social-grid{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+.social-box{
+  width: 110px;
+  height: 110px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: white;
+  flex-shrink: 0; /* This stops scatter */
+}
+
+/* Colors always show */
+.social-box.call{ background: #ffffff; color: #000; }
+.social-box.whatsapp{ background: #25D366; }
+.social-box.facebook{ background: #1877F2; }
+.social-box.instagram{ background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); }
+.social-box.tiktok{ background: #000; border: 1.5px solid #333; }
+.social-box.youtube{ background: #FF0000; }
+.social-box.map{ background: #ccff00; color: #000; }
+
+.social-box i{ font-size: 36px; margin-bottom: 6px; }
+.social-box span{ font-size: 11px; font-weight: 900; }
+
+/* FOR SMALL PHONE - So e no scatter */
+@media (max-width: 380px){
+  .social-box{
+    width: 90px;
+    height: 90px;
+  }
+  .social-grid{
+    gap: 10px;
+  }
+}
